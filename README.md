@@ -1,2 +1,2 @@
-# search-platform
-XRPL deep search platform
+# Platform
+XRPL Deep search platform
