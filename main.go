@@ -1,17 +1,14 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
+	"github.com/xrpscan/platform/routes"
 )
 
 func main() {
 	e := echo.New()
 
-	e.GET("/", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, &echo.Map{"data": "xrpscan search platform"})
-	})
+	routes.TransactionRoute(e)
 
 	e.Logger.Fatal(e.Start(":3000"))
 }
