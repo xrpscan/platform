@@ -4,7 +4,6 @@ go 1.17
 
 require (
 	github.com/confluentinc/confluent-kafka-go/v2 v2.0.2
-	github.com/elastic/go-elasticsearch v0.0.0
 	github.com/elastic/go-elasticsearch/v8 v8.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.10.0
