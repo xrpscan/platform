@@ -36,3 +36,8 @@ func NewEsClient() {
 		EsClient = es
 	})
 }
+
+func GetEsClient() *elasticsearch.Client {
+	NewEsClient()
+	return EsClient
+}

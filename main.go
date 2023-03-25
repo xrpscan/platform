@@ -6,18 +6,20 @@ import (
 	"github.com/xrpscan/platform/connections"
 	"github.com/xrpscan/platform/consumers"
 	"github.com/xrpscan/platform/routes"
+	"github.com/xrpscan/platform/signals"
 )
 
 func main() {
 	config.EnvLoad()
 
-	connections.NewProducer()
-	connections.NewConsumer()
+	connections.NewWriter()
+	connections.NewReader()
 	connections.NewEsClient()
 	go consumers.RunTransactionConsumer()
 
 	e := echo.New()
 	routes.TransactionRoute(e)
 
+	signals.HandleAll()
 	e.Logger.Fatal(e.Start(":3000"))
 }

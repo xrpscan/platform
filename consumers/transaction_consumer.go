@@ -1,34 +1,24 @@
 package consumers
 
 import (
+	"context"
 	"fmt"
+	"log"
 
-	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/xrpscan/platform/connections"
-	"github.com/xrpscan/platform/processor"
 )
 
 func RunTransactionConsumer() {
-	c := connections.KafkaConsumer
-	err := c.SubscribeTopics([]string{"test.messages"}, nil)
-	if err != nil {
-		panic("Cannot subscribe to topic")
-	}
-
-	run := true
-	for run {
-		ev := c.Poll(100)
-		if ev == nil {
-			fmt.Println("Poll result: nil")
-			continue
+	ctx := context.Background()
+	r := connections.KafkaReader
+	for {
+		m, err := r.FetchMessage(ctx)
+		if err != nil {
+			break
 		}
-
-		switch e := ev.(type) {
-		case *kafka.Message:
-			fmt.Printf("Message on %s: (%s)\n", e.TopicPartition, string(e.Value))
-			processor.IndexTransaction(string(e.Value))
-		case kafka.Error:
-			fmt.Printf("Error: %v: %v\n", e.Code(), e)
+		fmt.Printf("Message at topic(%v), partition(%v), offset(%v): %s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
+		if err := r.CommitMessages(ctx, m); err != nil {
+			log.Println("Failed to commit messages: ", err)
 		}
 	}
 }

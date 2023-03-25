@@ -11,7 +11,7 @@ import (
 
 func GetTransaction(c echo.Context) error {
 	hash := c.Param("hash")
-	producers.Produce(connections.KafkaProducer, hash)
+	go producers.Produce(connections.KafkaWriter, hash)
 	return c.JSON(http.StatusOK, responses.TransactionResponse{
 		Status:  http.StatusOK,
 		Message: "success",

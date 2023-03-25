@@ -3,37 +3,32 @@ package connections
 import (
 	"sync"
 
-	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/config"
 )
 
-var KafkaProducer *kafka.Producer
-var once_kp sync.Once
+var KafkaWriter *kafka.Writer
+var wOnce sync.Once
 
-func NewProducer() {
-	once_kp.Do(func() {
-		kp, err := kafka.NewProducer(&kafka.ConfigMap{
-			"bootstrap.servers": config.EnvKafkaBootstrapServer(),
-		})
-		if err != nil {
-			panic(err)
+func NewWriter() {
+	wOnce.Do(func() {
+		KafkaWriter = &kafka.Writer{
+			Addr:     kafka.TCP(config.EnvKafkaBootstrapServer()),
+			Balancer: &kafka.LeastBytes{},
+			Topic:    "test.messages",
 		}
-		KafkaProducer = kp
 	})
 }
 
-var KafkaConsumer *kafka.Consumer
-var once_kc sync.Once
+var KafkaReader *kafka.Reader
+var rOnce sync.Once
 
-func NewConsumer() {
-	once_kc.Do(func() {
-		kc, err := kafka.NewConsumer(&kafka.ConfigMap{
-			"bootstrap.servers": config.EnvKafkaBootstrapServer(),
-			"group.id":          config.EnvKafkaGroupId(),
+func NewReader() {
+	rOnce.Do(func() {
+		KafkaReader = kafka.NewReader(kafka.ReaderConfig{
+			Brokers: []string{config.EnvKafkaBootstrapServer()},
+			GroupID: config.EnvKafkaGroupId(),
+			Topic:   "test.messages",
 		})
-		if err != nil {
-			panic(err)
-		}
-		KafkaConsumer = kc
 	})
 }
