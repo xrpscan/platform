@@ -15,13 +15,15 @@ func IndexTransaction(tx string) {
 	res, err := esapi.IndexRequest{
 		Index:      "tx",
 		DocumentID: tx,
-		Body:       strings.NewReader(string("{'foo': 'yes', 'bar': 'no'}")),
+		Body:       strings.NewReader(string("{\"foo\": \"yes\", \"bar\": \"no\"}")),
 	}.Do(ctx, connections.GetEsClient())
-	defer res.Body.Close()
 	if err != nil {
 		fmt.Println("Error indexing")
 	}
-	fmt.Println()
+
+	fmt.Println(tx)
+	fmt.Println(res)
+	defer res.Body.Close()
 
 	if res.IsError() {
 		var e map[string]interface{}

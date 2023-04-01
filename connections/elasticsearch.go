@@ -9,10 +9,10 @@ import (
 )
 
 var EsClient *elasticsearch.Client
-var once_es sync.Once
+var esOnce sync.Once
 
 func NewEsClient() {
-	once_es.Do(func() {
+	esOnce.Do(func() {
 		config := elasticsearch.Config{
 			Addresses: []string{
 				config.EnvEsURL(),
