@@ -16,6 +16,7 @@ func NewWriter() {
 			Addr:     kafka.TCP(config.EnvKafkaBootstrapServer()),
 			Balancer: &kafka.LeastBytes{},
 			Topic:    "test.messages",
+			Async:    true,
 		}
 	})
 }
