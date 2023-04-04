@@ -21,7 +21,7 @@ func EnvRippledURL() string {
 	return os.Getenv("RIPPLED_URL")
 }
 
-func EnvRippledFullhistoryURL() string {
+func EnvRippledFullHistoryURL() string {
 	return os.Getenv("RIPPLED_FULLHISTORY_URL")
 }
 

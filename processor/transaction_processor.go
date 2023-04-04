@@ -11,17 +11,18 @@ import (
 )
 
 func IndexTransaction(tx string) {
-	ctx := context.Background()
-	res, err := esapi.IndexRequest{
+	req := esapi.IndexRequest{
 		Index:      "tx",
 		DocumentID: tx,
 		Body:       strings.NewReader(string("{\"foo\": \"yes\", \"bar\": \"no\"}")),
-	}.Do(ctx, connections.GetEsClient())
-	if err != nil {
-		fmt.Println("Error indexing")
 	}
 
-	fmt.Println(tx)
+	ctx := context.Background()
+	res, err := req.Do(ctx, connections.GetEsClient())
+	if err != nil {
+		fmt.Println("Error indexing document: " + tx)
+	}
+
 	fmt.Println(res)
 	defer res.Body.Close()
 

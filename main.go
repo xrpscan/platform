@@ -5,6 +5,7 @@ import (
 	"github.com/xrpscan/platform/config"
 	"github.com/xrpscan/platform/connections"
 	"github.com/xrpscan/platform/consumers"
+	"github.com/xrpscan/platform/producers"
 	"github.com/xrpscan/platform/routes"
 	"github.com/xrpscan/platform/signals"
 )
@@ -15,6 +16,10 @@ func main() {
 	connections.NewWriter()
 	connections.NewReader()
 	connections.NewEsClient()
+	connections.NewXrplClient()
+	connections.NewXrplFHClient()
+
+	go producers.ReadLedgerStream()
 	go consumers.RunTransactionConsumer()
 
 	e := echo.New()
