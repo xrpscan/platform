@@ -14,17 +14,7 @@ func CloseAll() {
 		log.Println("Error closing Kafka writer connection")
 	}
 
-	if XrplClient != nil && XrplClient.IsConnected() {
-		err := XrplClient.Close()
-		if err != nil {
-			log.Panicln("Error closing xrpl connection")
-		}
-	}
-
-	if XrplFHClient != nil && XrplFHClient.IsConnected() {
-		err := XrplFHClient.Close()
-		if err != nil {
-			log.Panicln("Error closing xrpl fullhistory connection")
-		}
+	if err := XrplClient.Close(); err != nil {
+		log.Println("Error closing xrpl connection")
 	}
 }

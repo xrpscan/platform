@@ -17,7 +17,7 @@ type BaseResponse struct {
 }
 
 type LedgerStream struct {
-	Type             string `json:"type,omitempty"`
+	Type             string `json:"type,omitempty"` // default: ledgerClosed
 	FeeBase          uint64 `json:"fee_base,omitempty"`
 	FeeRef           uint64 `json:"fee_ref,omitempty"`
 	LedgerHash       string `json:"ledger_hash,omitempty"`
@@ -30,7 +30,7 @@ type LedgerStream struct {
 }
 
 type ValidationStream struct {
-	Type                string   `json:"type,omitempty"`
+	Type                string   `json:"type,omitempty"` // default: validationReceived
 	Amendments          []string `json:"amendments,omitempty"`
 	BaseFee             uint64   `json:"base_fee,omitempty"`
 	Cookie              string   `json:"cookie,omitempty"`
@@ -49,7 +49,7 @@ type ValidationStream struct {
 }
 
 type TransactionStream struct {
-	Type                string `json:"type,omitempty"`
+	Type                string `json:"type,omitempty"` // default: transaction
 	Status              string `json:"status,omitempty"`
 	EngineResult        string `json:"engine_result,omitempty"`
 	EngineResultCode    int64  `json:"engine_result_code,omitempty"`
@@ -65,7 +65,7 @@ type TransactionStream struct {
 }
 
 type PeerStatusStream struct {
-	Type           string `json:"type,omitempty"`
+	Type           string `json:"type,omitempty"` // default: peerStatusChange
 	Action         string `json:"action,omitempty"`
 	Date           uint64 `json:"date,omitempty"`
 	LedgerHash     string `json:"ledger_hash,omitempty"`
@@ -75,7 +75,7 @@ type PeerStatusStream struct {
 }
 
 type OrderBookStream struct {
-	Type                string `json:"type,omitempty"`
+	Type                string `json:"type,omitempty"` // default: transaction
 	Status              string `json:"status,omitempty"`
 	EngineResult        string `json:"engine_result,omitempty"`
 	EngineResultCode    int64  `json:"engine_result_code,omitempty"`
@@ -89,12 +89,12 @@ type OrderBookStream struct {
 }
 
 type ConsensusStream struct {
-	Type      string `json:"type,omitempty"`
+	Type      string `json:"type,omitempty"` // default: consensusPhase
 	Consensus string `json:"consensus,omitempty"`
 }
 
 type PathFindStream struct {
-	Type               string `json:"type,omitempty"`
+	Type               string `json:"type,omitempty"` // default: path_find
 	SourceAccount      string `json:"source_account,omitempty"`
 	DestinationAccount string `json:"destination_account,omitempty"`
 	DestinationAmount  string `json:"destination_amount,omitempty"`

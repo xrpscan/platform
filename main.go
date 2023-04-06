@@ -17,9 +17,8 @@ func main() {
 	connections.NewReader()
 	connections.NewEsClient()
 	connections.NewXrplClient()
-	connections.NewXrplFHClient()
 
-	go producers.ReadLedgerStream()
+	producers.SubscribeStreams()
 	go consumers.RunTransactionConsumer()
 
 	e := echo.New()

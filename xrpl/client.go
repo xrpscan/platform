@@ -6,6 +6,7 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -26,11 +27,18 @@ type ClientConfig struct {
 }
 
 type Client struct {
-	config       ClientConfig
-	connection   *websocket.Conn
-	response     *http.Response
-	LedgerStream chan LedgerStream
-	err          error
+	config            ClientConfig
+	connection        *websocket.Conn
+	closed            bool
+	mutex             sync.Mutex
+	response          *http.Response
+	LedgerStream      chan []byte
+	ValidationStream  chan []byte
+	TransactionStream chan []byte
+	PeerStatusStream  chan []byte
+	ConsensusStream   chan []byte
+	PathFindStream    chan []byte
+	err               error
 }
 
 func (config *ClientConfig) Validate() error {
@@ -58,7 +66,15 @@ func NewClient(config ClientConfig) *Client {
 		config.ConnectionTimeout = 60 * time.Second
 	}
 
-	client := &Client{config: config}
+	client := &Client{
+		config:            config,
+		LedgerStream:      make(chan []byte, 4),
+		ValidationStream:  make(chan []byte, 4),
+		TransactionStream: make(chan []byte, 4),
+		PeerStatusStream:  make(chan []byte, 4),
+		ConsensusStream:   make(chan []byte, 4),
+		PathFindStream:    make(chan []byte, 4),
+	}
 	c, r, err := websocket.DefaultDialer.Dial(config.URL, nil)
 	if err != nil {
 		client.err = err
@@ -69,29 +85,6 @@ func NewClient(config ClientConfig) *Client {
 	client.handleResponse()
 	fmt.Println("XRPL response: ", r)
 	return client
-}
-
-func (c *Client) handleResponse() error {
-	go func() {
-		for {
-			var v interface{}
-			err := c.connection.ReadJSON(&v)
-			if err != nil {
-				log.Println("XRPL read error: ", err)
-			}
-			fmt.Println(v)
-		}
-	}()
-	return nil
-}
-
-func (c *Client) IsConnected() bool {
-	return c.connection != nil
-}
-
-func (c *Client) Close() error {
-	c.connection.Close()
-	return nil
 }
 
 func (c *Client) Request(r []byte) error {
@@ -109,6 +102,24 @@ func (c *Client) Subscribe(stream string) error {
 	err := c.Request([]byte(m))
 	if err != nil {
 		log.Println("XRPL write error: ", err)
+		return err
+	}
+	return nil
+}
+
+func (c *Client) Close() error {
+	c.mutex.Lock()
+	c.closed = true
+	c.mutex.Unlock()
+
+	err := c.connection.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+	if err != nil {
+		log.Println("Write close error: ", err)
+		return err
+	}
+	err = c.connection.Close()
+	if err != nil {
+		log.Println("Write close error: ", err)
 		return err
 	}
 	return nil
