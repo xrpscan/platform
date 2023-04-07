@@ -19,7 +19,7 @@ func main() {
 	connections.NewXrplClient()
 
 	producers.SubscribeStreams()
-	go consumers.RunTransactionConsumer()
+	consumers.RunTransactionConsumer()
 
 	e := echo.New()
 	routes.TransactionRoute(e)

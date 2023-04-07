@@ -1,5 +1,10 @@
 package xrpl
 
+type StreamMessage struct {
+	Key   []byte
+	Value []byte
+}
+
 type BaseRequest struct {
 	Id         string `json:"id,omitempty"`
 	Command    string `json:"command,omitempty"`

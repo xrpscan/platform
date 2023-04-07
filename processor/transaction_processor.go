@@ -10,20 +10,23 @@ import (
 	"github.com/xrpscan/platform/connections"
 )
 
-func IndexTransaction(tx string) {
+func IndexTransaction(key []byte, message []byte) {
+	var tx map[string]interface{}
+	if err := json.NewDecoder(strings.NewReader(string(message))).Decode(&tx); err != nil {
+		fmt.Println("Error decoding transaction")
+	}
+
 	req := esapi.IndexRequest{
 		Index:      "tx",
-		DocumentID: tx,
-		Body:       strings.NewReader(string("{\"foo\": \"yes\", \"bar\": \"no\"}")),
+		DocumentID: string(key),
+		Body:       strings.NewReader(string(message)),
 	}
 
 	ctx := context.Background()
 	res, err := req.Do(ctx, connections.GetEsClient())
 	if err != nil {
-		fmt.Println("Error indexing document: " + tx)
+		fmt.Println("Error indexing document: " + string(key))
 	}
-
-	fmt.Println(res)
 	defer res.Body.Close()
 
 	if res.IsError() {

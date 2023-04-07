@@ -24,6 +24,7 @@ type ClientConfig struct {
 	Proxy              byte
 	ProxyAuthorization byte
 	Timeout            time.Duration
+	QueueCapacity      int
 }
 
 type Client struct {
@@ -32,12 +33,13 @@ type Client struct {
 	closed            bool
 	mutex             sync.Mutex
 	response          *http.Response
-	LedgerStream      chan []byte
-	ValidationStream  chan []byte
-	TransactionStream chan []byte
-	PeerStatusStream  chan []byte
-	ConsensusStream   chan []byte
-	PathFindStream    chan []byte
+	LedgerStream      chan StreamMessage
+	ValidationStream  chan StreamMessage
+	TransactionStream chan StreamMessage
+	PeerStatusStream  chan StreamMessage
+	ConsensusStream   chan StreamMessage
+	PathFindStream    chan StreamMessage
+	DefaultStream     chan StreamMessage
 	err               error
 }
 
@@ -66,14 +68,19 @@ func NewClient(config ClientConfig) *Client {
 		config.ConnectionTimeout = 60 * time.Second
 	}
 
+	if config.QueueCapacity == 0 {
+		config.QueueCapacity = 128
+	}
+
 	client := &Client{
 		config:            config,
-		LedgerStream:      make(chan []byte, 4),
-		ValidationStream:  make(chan []byte, 4),
-		TransactionStream: make(chan []byte, 4),
-		PeerStatusStream:  make(chan []byte, 4),
-		ConsensusStream:   make(chan []byte, 4),
-		PathFindStream:    make(chan []byte, 4),
+		LedgerStream:      make(chan StreamMessage, config.QueueCapacity),
+		ValidationStream:  make(chan StreamMessage, config.QueueCapacity),
+		TransactionStream: make(chan StreamMessage, config.QueueCapacity),
+		PeerStatusStream:  make(chan StreamMessage, config.QueueCapacity),
+		ConsensusStream:   make(chan StreamMessage, config.QueueCapacity),
+		PathFindStream:    make(chan StreamMessage, config.QueueCapacity),
+		DefaultStream:     make(chan StreamMessage, config.QueueCapacity),
 	}
 	c, r, err := websocket.DefaultDialer.Dial(config.URL, nil)
 	if err != nil {

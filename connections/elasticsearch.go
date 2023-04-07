@@ -32,7 +32,6 @@ func NewEsClient() {
 			log.Fatalf("Error getting elasticsearch info: %s\n", err)
 		}
 		defer res.Body.Close()
-		log.Println(res)
 		EsClient = es
 	})
 }

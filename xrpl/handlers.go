@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
@@ -40,17 +41,24 @@ func (c *Client) resolveStream(message []byte) {
 
 	switch m["type"] {
 	case "ledgerClosed":
-		c.LedgerStream <- message
+		c.LedgerStream <- StreamMessage{Key: []byte(uuid.New().String()), Value: message}
+
 	case "validationReceived":
-		c.ValidationStream <- message
+		c.ValidationStream <- StreamMessage{Key: []byte(uuid.New().String()), Value: message}
+
 	case "transaction":
-		c.TransactionStream <- message
+		c.TransactionStream <- StreamMessage{Key: []byte(uuid.New().String()), Value: message}
+
 	case "peerStatusChange":
-		c.PeerStatusStream <- message
+		c.PeerStatusStream <- StreamMessage{Key: []byte(uuid.New().String()), Value: message}
+
 	case "consensusPhase":
-		c.ConsensusStream <- message
+		c.ConsensusStream <- StreamMessage{Key: []byte(uuid.New().String()), Value: message}
+
 	case "path_find":
-		c.PathFindStream <- message
+		c.PathFindStream <- StreamMessage{Key: []byte(uuid.New().String()), Value: message}
+
 	default:
+		c.DefaultStream <- StreamMessage{Key: []byte(uuid.New().String()), Value: message}
 	}
 }

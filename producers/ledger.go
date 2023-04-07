@@ -6,6 +6,7 @@ import (
 
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/connections"
+	"github.com/xrpscan/platform/xrpl"
 )
 
 func SubscribeStreams() {
@@ -17,18 +18,34 @@ func SubscribeStreams() {
 			select {
 			case ledger := <-connections.XrplClient.LedgerStream:
 				Produce(connections.KafkaWriter, ledger)
-			case tx := <-connections.XrplClient.TransactionStream:
-				Produce(connections.KafkaWriter, tx)
+
+			case validation := <-connections.XrplClient.ValidationStream:
+				Produce(connections.KafkaWriter, validation)
+
+			case transaction := <-connections.XrplClient.TransactionStream:
+				Produce(connections.KafkaWriter, transaction)
+
+			case peerStatus := <-connections.XrplClient.PeerStatusStream:
+				Produce(connections.KafkaWriter, peerStatus)
+
+			case consensus := <-connections.XrplClient.ValidationStream:
+				Produce(connections.KafkaWriter, consensus)
+
+			case pathFind := <-connections.XrplClient.PeerStatusStream:
+				Produce(connections.KafkaWriter, pathFind)
+
+			case defaultObject := <-connections.XrplClient.DefaultStream:
+				Produce(connections.KafkaWriter, defaultObject)
 			}
 		}
 	}()
 }
 
-func Produce(w *kafka.Writer, message []byte) {
+func Produce(w *kafka.Writer, message xrpl.StreamMessage) {
 	err := w.WriteMessages(context.Background(),
 		kafka.Message{
-			Key:   []byte("42"),
-			Value: message,
+			Key:   message.Key,
+			Value: message.Value,
 		},
 	)
 	if err != nil {
