@@ -33,13 +33,15 @@ type Client struct {
 	closed            bool
 	mutex             sync.Mutex
 	response          *http.Response
-	LedgerStream      chan StreamMessage
-	ValidationStream  chan StreamMessage
-	TransactionStream chan StreamMessage
-	PeerStatusStream  chan StreamMessage
-	ConsensusStream   chan StreamMessage
-	PathFindStream    chan StreamMessage
-	DefaultStream     chan StreamMessage
+	StreamLedger      chan []byte
+	StreamTransaction chan []byte
+	StreamValidation  chan []byte
+	StreamManifest    chan []byte
+	StreamPeerStatus  chan []byte
+	StreamConsensus   chan []byte
+	StreamPathFind    chan []byte
+	StreamServer      chan []byte
+	StreamDefault     chan []byte
 	err               error
 }
 
@@ -74,41 +76,49 @@ func NewClient(config ClientConfig) *Client {
 
 	client := &Client{
 		config:            config,
-		LedgerStream:      make(chan StreamMessage, config.QueueCapacity),
-		ValidationStream:  make(chan StreamMessage, config.QueueCapacity),
-		TransactionStream: make(chan StreamMessage, config.QueueCapacity),
-		PeerStatusStream:  make(chan StreamMessage, config.QueueCapacity),
-		ConsensusStream:   make(chan StreamMessage, config.QueueCapacity),
-		PathFindStream:    make(chan StreamMessage, config.QueueCapacity),
-		DefaultStream:     make(chan StreamMessage, config.QueueCapacity),
+		StreamLedger:      make(chan []byte, config.QueueCapacity),
+		StreamTransaction: make(chan []byte, config.QueueCapacity),
+		StreamValidation:  make(chan []byte, config.QueueCapacity),
+		StreamManifest:    make(chan []byte, config.QueueCapacity),
+		StreamPeerStatus:  make(chan []byte, config.QueueCapacity),
+		StreamConsensus:   make(chan []byte, config.QueueCapacity),
+		StreamPathFind:    make(chan []byte, config.QueueCapacity),
+		StreamServer:      make(chan []byte, config.QueueCapacity),
+		StreamDefault:     make(chan []byte, config.QueueCapacity),
 	}
 	c, r, err := websocket.DefaultDialer.Dial(config.URL, nil)
 	if err != nil {
 		client.err = err
-		log.Println("Error connecting to xrpl: ", config.URL)
+		return nil
 	}
+	defer r.Body.Close()
 	client.connection = c
 	client.response = r
+	client.connection.SetPongHandler(client.handlePong)
 	client.handleResponse()
-	fmt.Println("XRPL response: ", r)
 	return client
 }
 
-func (c *Client) Request(r []byte) error {
-	fmt.Println("Sending request: ")
-	err := c.connection.WriteMessage(websocket.TextMessage, r)
-	if err != nil {
-		log.Println("Request error", err)
+func (c *Client) Ping(message []byte) error {
+	if err := c.connection.WriteMessage(websocket.PingMessage, message); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Client) Subscribe(stream string) error {
+func (c *Client) Request(req []byte) error {
+	fmt.Println("Sending request: ")
+	err := c.connection.WriteMessage(websocket.TextMessage, req)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Client) Subscribe(stream []byte) error {
 	m := fmt.Sprintf("{\"command\":\"subscribe\",\"streams\":[\"%s\"]}", stream)
 	err := c.Request([]byte(m))
 	if err != nil {
-		log.Println("XRPL write error: ", err)
 		return err
 	}
 	return nil

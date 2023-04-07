@@ -5,9 +5,13 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
+
+func (c *Client) handlePong(message string) error {
+	fmt.Println("PONG response:", message)
+	return nil
+}
 
 func (c *Client) handleResponse() error {
 	go func() {
@@ -40,25 +44,31 @@ func (c *Client) resolveStream(message []byte) {
 	}
 
 	switch m["type"] {
-	case "ledgerClosed":
-		c.LedgerStream <- StreamMessage{Key: []byte(uuid.New().String()), Value: message}
+	case StreamResponseType(StreamTypeLedger):
+		c.StreamLedger <- message
 
-	case "validationReceived":
-		c.ValidationStream <- StreamMessage{Key: []byte(uuid.New().String()), Value: message}
+	case StreamResponseType(StreamTypeTransaction):
+		c.StreamTransaction <- message
 
-	case "transaction":
-		c.TransactionStream <- StreamMessage{Key: []byte(uuid.New().String()), Value: message}
+	case StreamResponseType(StreamTypeValidations):
+		c.StreamValidation <- message
 
-	case "peerStatusChange":
-		c.PeerStatusStream <- StreamMessage{Key: []byte(uuid.New().String()), Value: message}
+	case StreamResponseType(StreamTypeManifests):
+		c.StreamManifest <- message
 
-	case "consensusPhase":
-		c.ConsensusStream <- StreamMessage{Key: []byte(uuid.New().String()), Value: message}
+	case StreamResponseType(StreamTypePeerStatus):
+		c.StreamPeerStatus <- message
 
-	case "path_find":
-		c.PathFindStream <- StreamMessage{Key: []byte(uuid.New().String()), Value: message}
+	case StreamResponseType(StreamTypeConsensus):
+		c.StreamConsensus <- message
+
+	case StreamResponseType(StreamTypePathFind):
+		c.StreamPathFind <- message
+
+	case StreamResponseType(StreamTypeServer):
+		c.StreamServer <- message
 
 	default:
-		c.DefaultStream <- StreamMessage{Key: []byte(uuid.New().String()), Value: message}
+		c.StreamDefault <- message
 	}
 }
