@@ -36,6 +36,10 @@ func EnvKafkaGroupId() string {
 	return os.Getenv("KAFKA_GROUP_ID")
 }
 
+func EnvKafkaTopicNamespace() string {
+	return os.Getenv("KAFKA_TOPIC_NAMESPACE")
+}
+
 /*
 * Elasticsearch settings
  */

@@ -9,10 +9,10 @@ import (
 	"github.com/xrpscan/platform/config"
 )
 
-func ProduceLedger(w *kafka.Writer, message []byte) {
+func ProduceTransaction(w *kafka.Writer, message []byte) {
 	err := w.WriteMessages(context.Background(),
 		kafka.Message{
-			Topic: config.TopicLedgers(),
+			Topic: config.TopicTransactions(),
 			Key:   []byte(uuid.New().String()),
 			Value: message,
 		},

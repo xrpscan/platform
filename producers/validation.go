@@ -9,10 +9,10 @@ import (
 	"github.com/xrpscan/platform/config"
 )
 
-func ProduceLedger(w *kafka.Writer, message []byte) {
+func ProduceValidation(w *kafka.Writer, message []byte) {
 	err := w.WriteMessages(context.Background(),
 		kafka.Message{
-			Topic: config.TopicLedgers(),
+			Topic: config.TopicValidations(),
 			Key:   []byte(uuid.New().String()),
 			Value: message,
 		},

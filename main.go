@@ -22,7 +22,8 @@ func main() {
 	consumers.RunTransactionConsumer()
 
 	e := echo.New()
-	routes.TransactionRoute(e)
+	e.HideBanner = true
+	routes.Add(e)
 
 	signals.HandleAll()
 	e.Logger.Fatal(e.Start(":3000"))

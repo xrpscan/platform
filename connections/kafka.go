@@ -10,12 +10,13 @@ import (
 var KafkaWriter *kafka.Writer
 var wOnce sync.Once
 
+// Common Kafka writer for the application. Every message must
+// specify the Topic where it must be written to.
 func NewWriter() {
 	wOnce.Do(func() {
 		KafkaWriter = &kafka.Writer{
 			Addr:     kafka.TCP(config.EnvKafkaBootstrapServer()),
 			Balancer: &kafka.LeastBytes{},
-			Topic:    "test.messages",
 			Async:    true,
 		}
 	})
@@ -29,7 +30,7 @@ func NewReader() {
 		KafkaReader = kafka.NewReader(kafka.ReaderConfig{
 			Brokers: []string{config.EnvKafkaBootstrapServer()},
 			GroupID: config.EnvKafkaGroupId(),
-			Topic:   "test.messages",
+			Topic:   config.TopicTransactions(),
 		})
 	})
 }

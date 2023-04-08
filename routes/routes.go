@@ -5,6 +5,7 @@ import (
 	"github.com/xrpscan/platform/controllers"
 )
 
-func TransactionRoute(e *echo.Echo) {
+func Add(e *echo.Echo) {
 	e.GET("/tx/:hash", controllers.GetTransaction)
+	e.GET("/account/:address", controllers.GetAccountInfo)
 }
