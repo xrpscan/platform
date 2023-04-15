@@ -6,8 +6,20 @@ import (
 
 func CloseAll() {
 	log.Println("Closing all connections")
-	if err := KafkaReader.Close(); err != nil {
-		log.Println("Error closing Kafka reader connection")
+	if err := KafkaReaderLedger.Close(); err != nil {
+		log.Println("Error closing Kafka Ledger reader connection")
+	}
+
+	if err := KafkaReaderTransaction.Close(); err != nil {
+		log.Println("Error closing Kafka Transaction reader connection")
+	}
+
+	if err := KafkaReaderValidation.Close(); err != nil {
+		log.Println("Error closing Kafka Validation reader connection")
+	}
+
+	if err := KafkaReaderDefault.Close(); err != nil {
+		log.Println("Error closing Kafka Default reader connection")
 	}
 
 	if err := KafkaWriter.Close(); err != nil {

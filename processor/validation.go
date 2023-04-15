@@ -7,17 +7,19 @@ import (
 	"strings"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/connections"
 )
 
-func IndexTransaction(key []byte, message []byte) {
-	var tx map[string]interface{}
-	if err := json.NewDecoder(strings.NewReader(string(message))).Decode(&tx); err != nil {
-		fmt.Println("Error decoding transaction")
+func IndexValidation(m kafka.Message) {
+	key, message := m.Key, m.Value
+	var validation map[string]interface{}
+	if err := json.NewDecoder(strings.NewReader(string(message))).Decode(&validation); err != nil {
+		fmt.Println("Error decoding validation")
 	}
 
 	req := esapi.IndexRequest{
-		Index:      "tx",
+		Index:      "validation",
 		DocumentID: string(key),
 		Body:       strings.NewReader(string(message)),
 	}

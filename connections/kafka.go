@@ -22,15 +22,61 @@ func NewWriter() {
 	})
 }
 
-var KafkaReader *kafka.Reader
-var rOnce sync.Once
+var KafkaReaderLedger *kafka.Reader
+var lOnce sync.Once
 
-func NewReader() {
-	rOnce.Do(func() {
-		KafkaReader = kafka.NewReader(kafka.ReaderConfig{
+func NewLedgerReader() {
+	lOnce.Do(func() {
+		KafkaReaderLedger = kafka.NewReader(kafka.ReaderConfig{
+			Brokers: []string{config.EnvKafkaBootstrapServer()},
+			GroupID: config.EnvKafkaGroupId(),
+			Topic:   config.TopicLedgers(),
+		})
+	})
+}
+
+var KafkaReaderTransaction *kafka.Reader
+var krtOnce sync.Once
+
+func NewTransactionReader() {
+	krtOnce.Do(func() {
+		KafkaReaderTransaction = kafka.NewReader(kafka.ReaderConfig{
 			Brokers: []string{config.EnvKafkaBootstrapServer()},
 			GroupID: config.EnvKafkaGroupId(),
 			Topic:   config.TopicTransactions(),
 		})
 	})
+}
+
+var KafkaReaderValidation *kafka.Reader
+var krvOnce sync.Once
+
+func NewValidationReader() {
+	krvOnce.Do(func() {
+		KafkaReaderValidation = kafka.NewReader(kafka.ReaderConfig{
+			Brokers: []string{config.EnvKafkaBootstrapServer()},
+			GroupID: config.EnvKafkaGroupId(),
+			Topic:   config.TopicValidations(),
+		})
+	})
+}
+
+var KafkaReaderDefault *kafka.Reader
+var krdOnce sync.Once
+
+func NewDefaultReader() {
+	krdOnce.Do(func() {
+		KafkaReaderDefault = kafka.NewReader(kafka.ReaderConfig{
+			Brokers: []string{config.EnvKafkaBootstrapServer()},
+			GroupID: config.EnvKafkaGroupId(),
+			Topic:   config.TopicDefault(),
+		})
+	})
+}
+
+func NewReaders() {
+	NewLedgerReader()
+	NewTransactionReader()
+	NewValidationReader()
+	NewDefaultReader()
 }

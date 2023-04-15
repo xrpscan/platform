@@ -12,9 +12,9 @@ import (
 )
 
 func SubscribeStreams() {
-	// connections.XrplClient.Subscribe([]byte("ledger"))
-	// connections.XrplClient.Subscribe([]byte("transactions"))
-	// connections.XrplClient.Subscribe([]byte("validations"))
+	connections.XrplClient.Subscribe([]byte("ledger"))
+	connections.XrplClient.Subscribe([]byte("transactions"))
+	connections.XrplClient.Subscribe([]byte("validations"))
 
 	go func() {
 		for {

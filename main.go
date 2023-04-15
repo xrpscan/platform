@@ -14,12 +14,12 @@ func main() {
 	config.EnvLoad()
 
 	connections.NewWriter()
-	connections.NewReader()
+	connections.NewReaders()
 	connections.NewEsClient()
 	connections.NewXrplClient()
 
 	producers.SubscribeStreams()
-	consumers.RunTransactionConsumer()
+	consumers.RunConsumers()
 
 	e := echo.New()
 	e.HideBanner = true
