@@ -7,6 +7,7 @@ import (
 	"math"
 	"net/http"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -42,6 +43,8 @@ type Client struct {
 	StreamPathFind    chan []byte
 	StreamServer      chan []byte
 	StreamDefault     chan []byte
+	requestQueue      map[uint64]string
+	nextId            uint64
 	err               error
 }
 
@@ -85,6 +88,8 @@ func NewClient(config ClientConfig) *Client {
 		StreamPathFind:    make(chan []byte, config.QueueCapacity),
 		StreamServer:      make(chan []byte, config.QueueCapacity),
 		StreamDefault:     make(chan []byte, config.QueueCapacity),
+		requestQueue:      make(map[uint64]string),
+		nextId:            0,
 	}
 	c, r, err := websocket.DefaultDialer.Dial(config.URL, nil)
 	if err != nil {
@@ -106,8 +111,15 @@ func (c *Client) Ping(message []byte) error {
 	return nil
 }
 
+func (c *Client) NextID() uint64 {
+	c.mutex.Lock()
+	atomic.AddUint64(&c.nextId, 1)
+	c.mutex.Unlock()
+	return c.nextId
+}
+
 func (c *Client) Request(req []byte) error {
-	fmt.Println("Sending request: ")
+	fmt.Println("Sending request: ", string(req))
 	err := c.connection.WriteMessage(websocket.TextMessage, req)
 	if err != nil {
 		return err
@@ -116,7 +128,7 @@ func (c *Client) Request(req []byte) error {
 }
 
 func (c *Client) Subscribe(stream []byte) error {
-	m := fmt.Sprintf("{\"command\":\"subscribe\",\"streams\":[\"%s\"]}", stream)
+	m := fmt.Sprintf(`{"command":"subscribe","streams":["%s"]}`, stream)
 	err := c.Request([]byte(m))
 	if err != nil {
 		return err

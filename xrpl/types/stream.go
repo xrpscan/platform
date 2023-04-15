@@ -1,20 +1,4 @@
-package xrpl
-
-type BaseRequest struct {
-	Id         string `json:"id,omitempty"`
-	Command    string `json:"command,omitempty"`
-	ApiVersion string `json:"api_version,omitempty"`
-}
-
-type BaseResponse struct {
-	Id         string `json:"id,omitempty"`
-	Status     string `json:"status,omitempty"`
-	Type       string `json:"type,omitempty"`
-	Result     string `json:"result,omitempty"`
-	Warning    string `json:"warning,omitempty"`
-	Forwarded  bool   `json:"forwarded,omitempty"`
-	ApiVersion string `json:"api_version,omitempty"`
-}
+package types
 
 type LedgerStream struct {
 	Type             string `json:"type,omitempty"` // default: ledgerClosed
@@ -57,11 +41,11 @@ type TransactionStream struct {
 	LedgerCurrentIndex  uint64 `json:"ledger_current_index,omitempty"`
 	LedgerHash          string `json:"ledger_hash,omitempty"`
 	LedgerIndex         uint64 `json:"ledger_index,omitempty"`
+	Meta                string `json:"meta,omitempty"`
+	Transaction         string `json:"transaction,omitempty"`
+	Validated           bool   `json:"validated,omitempty"`
 	// Meta                TransactionMeta `json:"meta,omitempty"`
 	// Transaction         Transaction     `json:"transaction,omitempty"`
-	Meta        string `json:"meta,omitempty"`
-	Transaction string `json:"transaction,omitempty"`
-	Validated   bool   `json:"validated,omitempty"`
 }
 
 type PeerStatusStream struct {
