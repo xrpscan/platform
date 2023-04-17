@@ -1,6 +1,6 @@
 module github.com/xrpscan/platform
 
-go 1.17
+go 1.18
 
 require (
 	github.com/elastic/go-elasticsearch/v8 v8.6.0
