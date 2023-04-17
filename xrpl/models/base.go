@@ -1,4 +1,4 @@
-package types
+package models
 
 type BaseRequest struct {
 	Id         int    `json:"id,omitempty"`
@@ -17,7 +17,8 @@ type BaseResponse struct {
 	Status     string    `json:"status,omitempty"`
 	Type       string    `json:"type,omitempty"`
 	Result     string    `json:"result,omitempty"`
-	Warnings   []Warning `json:"warning,omitempty"`
+	Warning    string    `json:"warning,omitempty"`
+	Warnings   []Warning `json:"warnings,omitempty"`
 	Forwarded  bool      `json:"forwarded,omitempty"`
 	ApiVersion int16     `json:"api_version,omitempty"`
 }

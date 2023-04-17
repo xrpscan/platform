@@ -1,7 +1,7 @@
-package types
+package models
 
 type AccountInfoRequest struct {
-	Command     string `json:"command,omitempty"`
+	BaseRequest
 	Account     string `json:"account,omitempty"`
 	LedgerHash  string `json:"ledger_hash,omitempty"`
 	LedgerIndex string `json:"ledger_index,omitempty"`
@@ -28,6 +28,7 @@ type QueueData struct {
 }
 
 type AccountInfoResponse struct {
+	BaseResponse
 	Result AccountInfoResult `json:"result,omitempty"`
 }
 

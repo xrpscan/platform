@@ -1,4 +1,4 @@
-package types
+package models
 
 type LedgerStream struct {
 	Type             string `json:"type,omitempty"` // default: ledgerClosed

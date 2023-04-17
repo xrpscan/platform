@@ -7,7 +7,6 @@ import (
 	"math"
 	"net/http"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -43,8 +42,8 @@ type Client struct {
 	StreamPathFind    chan []byte
 	StreamServer      chan []byte
 	StreamDefault     chan []byte
-	requestQueue      map[uint64]string
-	nextId            uint64
+	requestQueue      map[int]string
+	nextId            int
 	err               error
 }
 
@@ -88,7 +87,7 @@ func NewClient(config ClientConfig) *Client {
 		StreamPathFind:    make(chan []byte, config.QueueCapacity),
 		StreamServer:      make(chan []byte, config.QueueCapacity),
 		StreamDefault:     make(chan []byte, config.QueueCapacity),
-		requestQueue:      make(map[uint64]string),
+		requestQueue:      make(map[int]string),
 		nextId:            0,
 	}
 	c, r, err := websocket.DefaultDialer.Dial(config.URL, nil)
@@ -111,9 +110,9 @@ func (c *Client) Ping(message []byte) error {
 	return nil
 }
 
-func (c *Client) NextID() uint64 {
+func (c *Client) NextID() int {
 	c.mutex.Lock()
-	atomic.AddUint64(&c.nextId, 1)
+	c.nextId++
 	c.mutex.Unlock()
 	return c.nextId
 }
