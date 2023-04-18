@@ -99,7 +99,7 @@ func NewClient(config ClientConfig) *Client {
 	client.connection = c
 	client.response = r
 	client.connection.SetPongHandler(client.handlePong)
-	client.handleResponse()
+	go client.handleResponse()
 	return client
 }
 
@@ -117,18 +117,18 @@ func (c *Client) NextID() int {
 	return c.nextId
 }
 
-func (c *Client) Request(req []byte) error {
-	fmt.Println("Sending request: ", string(req))
-	err := c.connection.WriteMessage(websocket.TextMessage, req)
+func (c *Client) Subscribe(stream []byte) error {
+	m := fmt.Sprintf(`{"id":"%d","command":"subscribe","streams":["%s"]}`, c.NextID(), stream)
+	err := c.Request([]byte(m))
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Client) Subscribe(stream []byte) error {
-	m := fmt.Sprintf(`{"command":"subscribe","streams":["%s"]}`, stream)
-	err := c.Request([]byte(m))
+func (c *Client) Request(req []byte) error {
+	fmt.Println("Sending request: ", string(req))
+	err := c.connection.WriteMessage(websocket.TextMessage, req)
 	if err != nil {
 		return err
 	}

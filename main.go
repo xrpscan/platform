@@ -18,7 +18,7 @@ func main() {
 	connections.NewEsClient()
 	connections.NewXrplClient()
 
-	producers.SubscribeStreams()
+	go producers.SubscribeStreams()
 	consumers.RunConsumers()
 
 	e := echo.New()

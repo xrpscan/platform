@@ -14,26 +14,24 @@ func (c *Client) handlePong(message string) error {
 }
 
 func (c *Client) handleResponse() error {
-	go func() {
-		for {
-			if c.closed {
-				break
-			}
-			messageType, message, err := c.connection.ReadMessage()
-			if err != nil && websocket.IsCloseError(err) {
-				log.Println("XRPL read error: ", err)
-			}
-
-			switch messageType {
-			case websocket.CloseMessage:
-				return
-			case websocket.TextMessage:
-				c.resolveStream(message)
-			case websocket.BinaryMessage:
-			default:
-			}
+	for {
+		if c.closed {
+			break
 		}
-	}()
+		messageType, message, err := c.connection.ReadMessage()
+		if err != nil && websocket.IsCloseError(err) {
+			log.Println("XRPL read error: ", err)
+		}
+
+		switch messageType {
+		case websocket.CloseMessage:
+			return nil
+		case websocket.TextMessage:
+			c.resolveStream(message)
+		case websocket.BinaryMessage:
+		default:
+		}
+	}
 	return nil
 }
 
