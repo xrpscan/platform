@@ -8,17 +8,17 @@ import (
 	"github.com/xrpscan/platform/connections"
 	"github.com/xrpscan/platform/producers"
 	"github.com/xrpscan/platform/responses"
+	"github.com/xrpscan/platform/xrpl"
 )
 
 func GetAccountInfo(c echo.Context) error {
 	address := c.Param("address")
 	producers.Produce(connections.KafkaWriter, []byte(address))
-	req := fmt.Sprintf("{\"id\": 1,\"command\": \"account_info\", \"account\": \"%s\"}", address)
-	fmt.Println("req:", req)
-	err := connections.XrplClient.Request([]byte(req))
-	if err != nil {
-		fmt.Println("Error sending account_info")
+	req := xrpl.BaseRequest{
+		"command": "account_info",
+		"account": "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg",
 	}
+	connections.XrplClient.Request(req, func() { fmt.Println("I am func's inner voice(GetAccountInfo)") })
 	return c.JSON(http.StatusOK, responses.TransactionResponse{
 		Status:  http.StatusOK,
 		Message: "success",
