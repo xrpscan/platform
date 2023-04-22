@@ -1,4 +1,4 @@
-package processor
+package indexer
 
 import (
 	"context"
@@ -11,15 +11,15 @@ import (
 	"github.com/xrpscan/platform/connections"
 )
 
-func IndexLedger(m kafka.Message) {
+func IndexTransaction(m kafka.Message) {
 	key, message := m.Key, m.Value
-	var ledger map[string]interface{}
-	if err := json.NewDecoder(strings.NewReader(string(message))).Decode(&ledger); err != nil {
-		fmt.Println("Error decoding ledger")
+	var tx map[string]interface{}
+	if err := json.NewDecoder(strings.NewReader(string(message))).Decode(&tx); err != nil {
+		fmt.Println("Error decoding transaction")
 	}
 
 	req := esapi.IndexRequest{
-		Index:      "ledger",
+		Index:      "tx",
 		DocumentID: string(key),
 		Body:       strings.NewReader(string(message)),
 	}

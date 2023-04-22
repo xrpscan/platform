@@ -1,4 +1,4 @@
-package processor
+package indexer
 
 import (
 	"context"
