@@ -6,7 +6,7 @@ import (
 
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/connections"
-	"github.com/xrpscan/platform/processor"
+	"github.com/xrpscan/platform/indexer"
 )
 
 func RunConsumer(conn *kafka.Reader, callback func(m kafka.Message)) {
@@ -26,8 +26,8 @@ func RunConsumer(conn *kafka.Reader, callback func(m kafka.Message)) {
 }
 
 func RunConsumers() {
-	go RunConsumer(connections.KafkaReaderLedger, processor.IndexLedger)
-	go RunConsumer(connections.KafkaReaderTransaction, processor.IndexTransaction)
-	go RunConsumer(connections.KafkaReaderValidation, processor.IndexValidation)
-	go RunConsumer(connections.KafkaReaderDefault, processor.PrintMessage)
+	go RunConsumer(connections.KafkaReaderLedger, indexer.Test)
+	go RunConsumer(connections.KafkaReaderTransaction, indexer.PrintMessage)
+	go RunConsumer(connections.KafkaReaderValidation, indexer.PrintMessage)
+	go RunConsumer(connections.KafkaReaderDefault, indexer.PrintMessage)
 }
