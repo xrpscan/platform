@@ -36,7 +36,7 @@ func (c *Client) handleResponse() error {
 }
 
 func (c *Client) resolveStream(message []byte) {
-	var m map[string]interface{}
+	var m BaseResponse
 	if err := json.Unmarshal(message, &m); err != nil {
 		fmt.Println("json.Unmarshal error: ", err)
 	}
@@ -65,6 +65,17 @@ func (c *Client) resolveStream(message []byte) {
 
 	case StreamResponseType(StreamTypeServer):
 		c.StreamServer <- message
+
+	case StreamResponseType(StreamTypeResponse):
+		requestId := fmt.Sprintf("%v", m["id"])
+		callback, exists := c.requestQueue[requestId]
+		if exists {
+			c.mutex.Lock()
+			// TODO: Add message payload to callback function
+			go callback()
+			delete(c.requestQueue, requestId)
+			c.mutex.Unlock()
+		}
 
 	default:
 		c.StreamDefault <- message

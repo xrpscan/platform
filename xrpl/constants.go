@@ -1,5 +1,13 @@
 package xrpl
 
+// BaseRequest is a map of keys and values. Values are usually strings,
+// but may be complex interface{} type
+type BaseRequest map[string]interface{}
+
+// BaseResponse is a map of keys and values. Values may be complex
+// interface{} type
+type BaseResponse map[string]interface{}
+
 // XRPL stream types as defined in rippled:
 //  1. https://github.com/XRPLF/xrpl.js/blob/main/packages/xrpl/src/models/common/index.ts#L36
 //  2. https://github.com/XRPLF/rippled/blob/master/src/ripple/rpc/handlers/Subscribe.cpp#L127
@@ -13,6 +21,7 @@ const (
 	StreamTypeConsensus            = "consensus"
 	StreamTypePathFind             = "path_find"
 	StreamTypeServer               = "server"
+	StreamTypeResponse             = "response"
 )
 
 // StreamResponseType returns a string denoting 'type' property present in the
@@ -38,6 +47,8 @@ func StreamResponseType(streamType string) string {
 		return "path_find"
 	case StreamTypeServer:
 		return "serverStatus"
+	case StreamTypeResponse:
+		return "response"
 	default:
 		return ""
 	}

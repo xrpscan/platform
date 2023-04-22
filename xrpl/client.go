@@ -1,11 +1,13 @@
 package xrpl
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"math"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 
@@ -42,7 +44,7 @@ type Client struct {
 	StreamPathFind    chan []byte
 	StreamServer      chan []byte
 	StreamDefault     chan []byte
-	requestQueue      map[int]string
+	requestQueue      map[string]func()
 	nextId            int
 	err               error
 }
@@ -87,7 +89,7 @@ func NewClient(config ClientConfig) *Client {
 		StreamPathFind:    make(chan []byte, config.QueueCapacity),
 		StreamServer:      make(chan []byte, config.QueueCapacity),
 		StreamDefault:     make(chan []byte, config.QueueCapacity),
-		requestQueue:      make(map[int]string),
+		requestQueue:      make(map[string]func()),
 		nextId:            0,
 	}
 	c, r, err := websocket.DefaultDialer.Dial(config.URL, nil)
@@ -110,35 +112,60 @@ func (c *Client) Ping(message []byte) error {
 	return nil
 }
 
-func (c *Client) NextID() int {
+// Returns incremental ID that may be used as request ID for websocket requests
+func (c *Client) NextID() string {
 	c.mutex.Lock()
 	c.nextId++
 	c.mutex.Unlock()
-	return c.nextId
+	return strconv.Itoa(c.nextId)
 }
 
-func (c *Client) Subscribe(stream []byte) error {
-	m := fmt.Sprintf(`{"id":"%d","command":"subscribe","streams":["%s"]}`, c.NextID(), stream)
-	err := c.Request([]byte(m))
+func (c *Client) Subscribe(streams []string) error {
+	req := BaseRequest{
+		"command": "subscribe",
+		"streams": streams,
+	}
+	err := c.Request(req, func() { fmt.Println("I am func's inner voice(Subscribe)") })
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Client) Request(req []byte) error {
-	fmt.Println("Sending request: ", string(req))
-	err := c.connection.WriteMessage(websocket.TextMessage, req)
+// Send a websocket request. This method takes a BaseRequest object and automatically adds
+// incremental request ID to it.
+//
+// Example usage:
+//
+//	req := BaseRequest{
+//		"command": "account_info",
+//		"account": "rG1QQv2nh2gr7RCZ1P8YYcBUKCCN633jCn",
+//		"ledger_index": "current",
+//	}
+//
+//	err := client.Request(req, func(){})
+func (c *Client) Request(req BaseRequest, callback func()) error {
+	requestId := c.NextID()
+	req["id"] = requestId
+	data, err := json.Marshal(req)
 	if err != nil {
 		return err
 	}
+
+	c.mutex.Lock()
+	c.requestQueue[requestId] = callback
+	err = c.connection.WriteMessage(websocket.TextMessage, data)
+	if err != nil {
+		return err
+	}
+	c.mutex.Unlock()
 	return nil
 }
 
 func (c *Client) Close() error {
 	c.mutex.Lock()
+	defer c.mutex.Unlock()
 	c.closed = true
-	c.mutex.Unlock()
 
 	err := c.connection.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 	if err != nil {

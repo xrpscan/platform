@@ -1,7 +1,7 @@
 package models
 
 type BaseRequest struct {
-	Id         int    `json:"id,omitempty"`
+	Id         string `json:"id,omitempty"`
 	Command    string `json:"command,omitempty"`
 	ApiVersion int16  `json:"api_version,omitempty"`
 }
@@ -13,7 +13,7 @@ type Warning struct {
 }
 
 type BaseResponse struct {
-	Id         int       `json:"id,omitempty"`
+	Id         string    `json:"id,omitempty"`
 	Status     string    `json:"status,omitempty"`
 	Type       string    `json:"type,omitempty"`
 	Result     string    `json:"result,omitempty"`
