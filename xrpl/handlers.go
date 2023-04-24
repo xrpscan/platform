@@ -68,12 +68,12 @@ func (c *Client) resolveStream(message []byte) {
 
 	case StreamResponseType(StreamTypeResponse):
 		requestId := fmt.Sprintf("%v", m["id"])
-		callback, exists := c.requestQueue[requestId]
-		if exists {
+		ch, ok := c.requestQueue[requestId]
+		if ok {
 			c.mutex.Lock()
-			// TODO: Add message payload to callback function
-			go callback()
+			ch <- m
 			delete(c.requestQueue, requestId)
+			close(ch)
 			c.mutex.Unlock()
 		}
 

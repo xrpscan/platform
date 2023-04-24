@@ -44,7 +44,7 @@ type Client struct {
 	StreamPathFind    chan []byte
 	StreamServer      chan []byte
 	StreamDefault     chan []byte
-	requestQueue      map[string]func()
+	requestQueue      map[string](chan<- BaseResponse)
 	nextId            int
 	err               error
 }
@@ -89,7 +89,7 @@ func NewClient(config ClientConfig) *Client {
 		StreamPathFind:    make(chan []byte, config.QueueCapacity),
 		StreamServer:      make(chan []byte, config.QueueCapacity),
 		StreamDefault:     make(chan []byte, config.QueueCapacity),
-		requestQueue:      make(map[string]func()),
+		requestQueue:      make(map[string](chan<- BaseResponse)),
 		nextId:            0,
 	}
 	c, r, err := websocket.DefaultDialer.Dial(config.URL, nil)
@@ -120,16 +120,16 @@ func (c *Client) NextID() string {
 	return strconv.Itoa(c.nextId)
 }
 
-func (c *Client) Subscribe(streams []string) error {
+func (c *Client) Subscribe(streams []string) (BaseResponse, error) {
 	req := BaseRequest{
 		"command": "subscribe",
 		"streams": streams,
 	}
-	err := c.Request(req, func() { fmt.Println("I am func's inner voice(Subscribe)") })
+	res, err := c.Request(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return res, nil
 }
 
 // Send a websocket request. This method takes a BaseRequest object and automatically adds
@@ -144,22 +144,26 @@ func (c *Client) Subscribe(streams []string) error {
 //	}
 //
 //	err := client.Request(req, func(){})
-func (c *Client) Request(req BaseRequest, callback func()) error {
+func (c *Client) Request(req BaseRequest) (BaseResponse, error) {
 	requestId := c.NextID()
 	req["id"] = requestId
 	data, err := json.Marshal(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	ch := make(chan BaseResponse, 1)
+
 	c.mutex.Lock()
-	c.requestQueue[requestId] = callback
+	c.requestQueue[requestId] = ch
 	err = c.connection.WriteMessage(websocket.TextMessage, data)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	c.mutex.Unlock()
-	return nil
+
+	res := <-ch
+	return res, nil
 }
 
 func (c *Client) Close() error {
