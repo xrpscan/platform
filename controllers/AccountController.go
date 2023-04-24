@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -18,10 +17,11 @@ func GetAccountInfo(c echo.Context) error {
 		"command": "account_info",
 		"account": "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg",
 	}
-	connections.XrplClient.Request(req, func() { fmt.Println("I am func's inner voice(GetAccountInfo)") })
+	res, _ := connections.XrplClient.Request(req)
 	return c.JSON(http.StatusOK, responses.TransactionResponse{
 		Status:  http.StatusOK,
 		Message: "success",
 		Data:    &echo.Map{"account_info": address},
+		Result:  &res,
 	})
 }

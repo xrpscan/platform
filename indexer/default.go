@@ -18,5 +18,6 @@ func Test(m kafka.Message) {
 		"command": "account_info",
 		"account": "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg",
 	}
-	connections.XrplClient.Request(req, func() { fmt.Println("I am func's inner voice(Test)") })
+	res, _ := connections.XrplClient.Request(req)
+	fmt.Println("Response:", res)
 }
