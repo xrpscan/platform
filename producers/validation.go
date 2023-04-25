@@ -2,18 +2,27 @@ package producers
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"log"
 
-	"github.com/google/uuid"
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/config"
+	"github.com/xrpscan/platform/xrpl"
 )
 
 func ProduceValidation(w *kafka.Writer, message []byte) {
+	var res xrpl.BaseResponse
+	if err := json.Unmarshal(message, &res); err != nil {
+		fmt.Println("json.Unmarshal error: ", err)
+	}
+
+	messageKey := fmt.Sprintf("%s.%s", res["ledger_index"], res["validation_public_key"])
+
 	err := w.WriteMessages(context.Background(),
 		kafka.Message{
 			Topic: config.TopicValidations(),
-			Key:   []byte(uuid.New().String()),
+			Key:   []byte(messageKey),
 			Value: message,
 		},
 	)

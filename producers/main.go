@@ -9,13 +9,14 @@ import (
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/config"
 	"github.com/xrpscan/platform/connections"
+	"github.com/xrpscan/platform/xrpl"
 )
 
 func SubscribeStreams() {
 	connections.XrplClient.Subscribe([]string{
-		"ledger",
-		"transactions",
-		"validations",
+		xrpl.StreamTypeLedger,
+		xrpl.StreamTypeTransaction,
+		xrpl.StreamTypeValidations,
 	})
 
 	for {
@@ -52,10 +53,12 @@ func SubscribeStreams() {
 }
 
 func Produce(w *kafka.Writer, message []byte) {
+	messageKey := uuid.NewString()
+
 	err := w.WriteMessages(context.Background(),
 		kafka.Message{
 			Topic: config.TopicDefault(),
-			Key:   []byte(uuid.New().String()),
+			Key:   []byte(messageKey),
 			Value: message,
 		},
 	)
