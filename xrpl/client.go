@@ -132,6 +132,18 @@ func (c *Client) Subscribe(streams []string) (BaseResponse, error) {
 	return res, nil
 }
 
+func (c *Client) Unsubscribe(streams []string) (BaseResponse, error) {
+	req := BaseRequest{
+		"command": "unsubscribe",
+		"streams": streams,
+	}
+	res, err := c.Request(req)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 // Send a websocket request. This method takes a BaseRequest object and automatically adds
 // incremental request ID to it.
 //
