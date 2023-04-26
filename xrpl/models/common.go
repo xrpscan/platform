@@ -73,3 +73,6 @@ type NFTOffer struct {
 	Destination   string `json:"destination,omitempty"`
 	Expiration    int    `json:"expiration,omitempty"`
 }
+
+type GlobalFlags struct {
+}
