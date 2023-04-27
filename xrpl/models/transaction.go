@@ -367,3 +367,30 @@ type TrustSetFlags struct {
 	TfSetFreeze     bool `json:"tfSetFreeze,omitempty"`
 	TfClearFreeze   bool `json:"tfClearFreeze,omitempty"`
 }
+
+type Transaction struct {
+	TransactionAccountDelete
+	TransactionAccountSet
+	TransactionCheckCancel
+	TransactionCheckCash
+	TransactionCheckCreate
+	TransactionDepositPreauth
+	TransactionEscrowCancel
+	TransactionEscrowCreate
+	TransactionEscrowFinish
+	TransactionNFTokenAcceptOffer
+	TransactionNFTokenBurn
+	TransactionNFTokenCancelOffer
+	TransactionNFTokenCreateOffer
+	TransactionNFTokenMint
+	TransactionOfferCancel
+	TransactionOfferCreate
+	TransactionPayment
+	TransactionPaymentChannelClaim
+	TransactionPaymentChannelCreate
+	TransactionPaymentChannelFund
+	TransactionSetRegularKey
+	TransactionSignerListSet
+	TransactionTicketCreate
+	TransactionTrustSet
+}

@@ -1,7 +1,9 @@
-package models
+package methods
+
+import "github.com/xrpscan/platform/xrpl/models"
 
 type AccountInfoRequest struct {
-	BaseRequest
+	models.BaseRequest
 	Account     string `json:"account,omitempty"`
 	LedgerHash  string `json:"ledger_hash,omitempty"`
 	LedgerIndex string `json:"ledger_index,omitempty"`
@@ -28,7 +30,7 @@ type QueueData struct {
 }
 
 type AccountInfoResponse struct {
-	BaseResponse
+	models.BaseResponse
 	Result AccountInfoResult `json:"result,omitempty"`
 }
 
