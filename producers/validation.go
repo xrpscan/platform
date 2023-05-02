@@ -17,7 +17,7 @@ func ProduceValidation(w *kafka.Writer, message []byte) {
 		fmt.Println("json.Unmarshal error: ", err)
 	}
 
-	messageKey := fmt.Sprintf("%s.%s", res["ledger_index"], res["validation_public_key"])
+	messageKey := fmt.Sprintf("%s.%s", res["validation_public_key"], res["ledger_index"])
 
 	err := w.WriteMessages(context.Background(),
 		kafka.Message{
