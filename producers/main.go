@@ -17,6 +17,11 @@ func SubscribeStreams() {
 		xrpl.StreamTypeLedger,
 		xrpl.StreamTypeTransaction,
 		xrpl.StreamTypeValidations,
+		xrpl.StreamTypePeerStatus,
+		xrpl.StreamTypeConsensus,
+		xrpl.StreamTypePathFind,
+		xrpl.StreamTypeManifests,
+		xrpl.StreamTypeServer,
 	})
 
 	for {
@@ -31,33 +36,36 @@ func SubscribeStreams() {
 			ProduceTransaction(connections.KafkaWriter, transaction)
 
 		case peerStatus := <-connections.XrplClient.StreamPeerStatus:
-			Produce(connections.KafkaWriter, peerStatus)
+			Produce(connections.KafkaWriter, peerStatus, config.TopicPeerStatus())
 
 		case consensus := <-connections.XrplClient.StreamConsensus:
-			Produce(connections.KafkaWriter, consensus)
+			Produce(connections.KafkaWriter, consensus, config.TopicConsensus())
 
 		case pathFind := <-connections.XrplClient.StreamPathFind:
-			Produce(connections.KafkaWriter, pathFind)
+			Produce(connections.KafkaWriter, pathFind, config.TopicPathFind())
 
 		case manifest := <-connections.XrplClient.StreamManifest:
-			Produce(connections.KafkaWriter, manifest)
+			Produce(connections.KafkaWriter, manifest, config.TopicManifests())
 
 		case server := <-connections.XrplClient.StreamServer:
-			Produce(connections.KafkaWriter, server)
+			Produce(connections.KafkaWriter, server, config.TopicServer())
 
 		case defaultObject := <-connections.XrplClient.StreamDefault:
 			fmt.Println(string(defaultObject))
-			Produce(connections.KafkaWriter, defaultObject)
+			Produce(connections.KafkaWriter, defaultObject, config.TopicDefault())
 		}
 	}
 }
 
-func Produce(w *kafka.Writer, message []byte) {
+func Produce(w *kafka.Writer, message []byte, topic string) {
 	messageKey := uuid.NewString()
+	if topic == "" {
+		topic = config.TopicDefault()
+	}
 
 	err := w.WriteMessages(context.Background(),
 		kafka.Message{
-			Topic: config.TopicDefault(),
+			Topic: topic,
 			Key:   []byte(messageKey),
 			Value: message,
 		},

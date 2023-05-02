@@ -3,7 +3,6 @@ package producers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"strconv"
 
@@ -15,7 +14,7 @@ import (
 func ProduceLedger(w *kafka.Writer, message []byte) {
 	var res xrpl.BaseResponse
 	if err := json.Unmarshal(message, &res); err != nil {
-		fmt.Println("json.Unmarshal error: ", err)
+		return
 	}
 
 	messageKey := strconv.Itoa(int(res["ledger_index"].(float64)))

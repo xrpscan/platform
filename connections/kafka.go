@@ -22,55 +22,119 @@ func NewWriter() {
 	})
 }
 
-var KafkaReaderLedger *kafka.Reader
-var lOnce sync.Once
+// Returns Kafka reader config with default settings applied
+func NewReaderConfig() kafka.ReaderConfig {
+	return kafka.ReaderConfig{
+		Brokers: []string{config.EnvKafkaBootstrapServer()},
+		GroupID: config.EnvKafkaGroupId(),
+	}
+}
 
+var KafkaReaderLedger *kafka.Reader
+var ledgerOnce sync.Once
+
+// Create a new Kafka Reader connection to $namespace-platform-ledger topic
 func NewLedgerReader() {
-	lOnce.Do(func() {
-		KafkaReaderLedger = kafka.NewReader(kafka.ReaderConfig{
-			Brokers: []string{config.EnvKafkaBootstrapServer()},
-			GroupID: config.EnvKafkaGroupId(),
-			Topic:   config.TopicLedgers(),
-		})
+	ledgerOnce.Do(func() {
+		cfg := NewReaderConfig()
+		cfg.Topic = config.TopicLedgers()
+		KafkaReaderLedger = kafka.NewReader(cfg)
 	})
 }
 
 var KafkaReaderTransaction *kafka.Reader
-var krtOnce sync.Once
+var txOnce sync.Once
 
+// Create a new Kafka Reader connection to $namespace-platform-transaction topic
 func NewTransactionReader() {
-	krtOnce.Do(func() {
-		KafkaReaderTransaction = kafka.NewReader(kafka.ReaderConfig{
-			Brokers: []string{config.EnvKafkaBootstrapServer()},
-			GroupID: config.EnvKafkaGroupId(),
-			Topic:   config.TopicTransactions(),
-		})
+	txOnce.Do(func() {
+		cfg := NewReaderConfig()
+		cfg.Topic = config.TopicTransactions()
+		KafkaReaderTransaction = kafka.NewReader(cfg)
 	})
 }
 
 var KafkaReaderValidation *kafka.Reader
-var krvOnce sync.Once
+var validationOnce sync.Once
 
+// Create a new Kafka Reader connection to $namespace-platform-validation topic
 func NewValidationReader() {
-	krvOnce.Do(func() {
-		KafkaReaderValidation = kafka.NewReader(kafka.ReaderConfig{
-			Brokers: []string{config.EnvKafkaBootstrapServer()},
-			GroupID: config.EnvKafkaGroupId(),
-			Topic:   config.TopicValidations(),
-		})
+	validationOnce.Do(func() {
+		cfg := NewReaderConfig()
+		cfg.Topic = config.TopicValidations()
+		KafkaReaderValidation = kafka.NewReader(cfg)
+	})
+}
+
+var KafkaReaderPeerStatus *kafka.Reader
+var peerstatusOnce sync.Once
+
+// Create a new Kafka Reader connection to $namespace-platform-peerstatus topic
+func NewPeerStatusReader() {
+	peerstatusOnce.Do(func() {
+		cfg := NewReaderConfig()
+		cfg.Topic = config.TopicPeerStatus()
+		KafkaReaderPeerStatus = kafka.NewReader(cfg)
+	})
+}
+
+var KafkaReaderConsensus *kafka.Reader
+var consensusOnce sync.Once
+
+// Create a new Kafka Reader connection to $namespace-platform-consensus topic
+func NewConsensusReader() {
+	consensusOnce.Do(func() {
+		cfg := NewReaderConfig()
+		cfg.Topic = config.TopicConsensus()
+		KafkaReaderConsensus = kafka.NewReader(cfg)
+	})
+}
+
+var KafkaReaderPathFind *kafka.Reader
+var pathfindOnce sync.Once
+
+// Create a new Kafka Reader connection to $namespace-platform-pathfind topic
+func NewPathFindReader() {
+	pathfindOnce.Do(func() {
+		cfg := NewReaderConfig()
+		cfg.Topic = config.TopicPathFind()
+		KafkaReaderPathFind = kafka.NewReader(cfg)
+	})
+}
+
+var KafkaReaderManifest *kafka.Reader
+var manifestOnce sync.Once
+
+// Create a new Kafka Reader connection to $namespace-platform-manifest topic
+func NewManifestReader() {
+	manifestOnce.Do(func() {
+		cfg := NewReaderConfig()
+		cfg.Topic = config.TopicManifests()
+		KafkaReaderManifest = kafka.NewReader(cfg)
+	})
+}
+
+var KafkaReaderServer *kafka.Reader
+var serverOnce sync.Once
+
+// Create a new Kafka Reader connection to $namespace-platform-server topic
+func NewServerReader() {
+	serverOnce.Do(func() {
+		cfg := NewReaderConfig()
+		cfg.Topic = config.TopicServer()
+		KafkaReaderServer = kafka.NewReader(cfg)
 	})
 }
 
 var KafkaReaderDefault *kafka.Reader
-var krdOnce sync.Once
+var defaultOnce sync.Once
 
+// Create a new Kafka Reader connection to $namespace-platform-default topic
 func NewDefaultReader() {
-	krdOnce.Do(func() {
-		KafkaReaderDefault = kafka.NewReader(kafka.ReaderConfig{
-			Brokers: []string{config.EnvKafkaBootstrapServer()},
-			GroupID: config.EnvKafkaGroupId(),
-			Topic:   config.TopicDefault(),
-		})
+	defaultOnce.Do(func() {
+		cfg := NewReaderConfig()
+		cfg.Topic = config.TopicDefault()
+		KafkaReaderDefault = kafka.NewReader(cfg)
 	})
 }
 
@@ -78,5 +142,10 @@ func NewReaders() {
 	NewLedgerReader()
 	NewTransactionReader()
 	NewValidationReader()
+	NewPeerStatusReader()
+	NewConsensusReader()
+	NewPathFindReader()
+	NewManifestReader()
+	NewServerReader()
 	NewDefaultReader()
 }

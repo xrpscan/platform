@@ -3,7 +3,6 @@ package producers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 
 	"github.com/segmentio/kafka-go"
@@ -13,8 +12,9 @@ import (
 
 func ProduceTransaction(w *kafka.Writer, message []byte) {
 	var res xrpl.BaseResponse
-	if err := json.Unmarshal(message, &res); err != nil {
-		fmt.Println("json.Unmarshal error: ", err)
+	err := json.Unmarshal(message, &res)
+	if err != nil {
+		return
 	}
 
 	tx, ok := res["transaction"].(map[string]interface{})
@@ -26,7 +26,7 @@ func ProduceTransaction(w *kafka.Writer, message []byte) {
 		return
 	}
 
-	err := w.WriteMessages(context.Background(),
+	err = w.WriteMessages(context.Background(),
 		kafka.Message{
 			Topic: config.TopicTransactions(),
 			Key:   []byte(messageKey),

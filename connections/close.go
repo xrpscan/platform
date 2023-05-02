@@ -18,6 +18,26 @@ func CloseAll() {
 		log.Println("Error closing Kafka Validation reader connection")
 	}
 
+	if err := KafkaReaderPeerStatus.Close(); err != nil {
+		log.Println("Error closing Kafka PeerStatus reader connection")
+	}
+
+	if err := KafkaReaderConsensus.Close(); err != nil {
+		log.Println("Error closing Kafka Consensus reader connection")
+	}
+
+	if err := KafkaReaderPathFind.Close(); err != nil {
+		log.Println("Error closing Kafka PathFind reader connection")
+	}
+
+	if err := KafkaReaderManifest.Close(); err != nil {
+		log.Println("Error closing Kafka Manifest reader connection")
+	}
+
+	if err := KafkaReaderServer.Close(); err != nil {
+		log.Println("Error closing Kafka Server reader connection")
+	}
+
 	if err := KafkaReaderDefault.Close(); err != nil {
 		log.Println("Error closing Kafka Default reader connection")
 	}

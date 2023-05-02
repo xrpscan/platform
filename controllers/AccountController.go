@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/xrpscan/platform/config"
 	"github.com/xrpscan/platform/connections"
 	"github.com/xrpscan/platform/producers"
 	"github.com/xrpscan/platform/responses"
@@ -12,7 +13,7 @@ import (
 
 func GetAccountInfo(c echo.Context) error {
 	address := c.Param("address")
-	producers.Produce(connections.KafkaWriter, []byte(address))
+	producers.Produce(connections.KafkaWriter, []byte(address), config.TopicDefault())
 	req := xrpl.BaseRequest{
 		"command": "account_info",
 		"account": "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg",

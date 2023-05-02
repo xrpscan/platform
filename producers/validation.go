@@ -14,7 +14,7 @@ import (
 func ProduceValidation(w *kafka.Writer, message []byte) {
 	var res xrpl.BaseResponse
 	if err := json.Unmarshal(message, &res); err != nil {
-		fmt.Println("json.Unmarshal error: ", err)
+		return
 	}
 
 	messageKey := fmt.Sprintf("%s.%s", res["validation_public_key"], res["ledger_index"])
