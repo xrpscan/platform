@@ -15,6 +15,20 @@ func EnvLoad() {
 }
 
 /*
+* Service settings
+ */
+
+// Get default log level
+func EnvLogLevel() string {
+	return os.Getenv("LOG_LEVEL")
+}
+
+// Get default log type
+func EnvLogType() string {
+	return os.Getenv("LOG_TYPE")
+}
+
+/*
 * Rippled settings
  */
 func EnvRippledURL() string {

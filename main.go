@@ -5,6 +5,7 @@ import (
 	"github.com/xrpscan/platform/config"
 	"github.com/xrpscan/platform/connections"
 	"github.com/xrpscan/platform/consumers"
+	"github.com/xrpscan/platform/logger"
 	"github.com/xrpscan/platform/producers"
 	"github.com/xrpscan/platform/routes"
 	"github.com/xrpscan/platform/signals"
@@ -12,6 +13,7 @@ import (
 
 func main() {
 	config.EnvLoad()
+	logger.LoggerSetup()
 
 	connections.NewWriter()
 	connections.NewReaders()
