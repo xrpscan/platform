@@ -2,6 +2,7 @@ package logger
 
 import (
 	"os"
+	"sync"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -9,14 +10,17 @@ import (
 )
 
 var Log zerolog.Logger
+var loggerOnce sync.Once
 
-func LoggerSetup() {
-	level, err := zerolog.ParseLevel(config.EnvLogLevel())
-	if err != nil {
+func New() {
+	loggerOnce.Do(func() {
 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	}
-	zerolog.SetGlobalLevel(level)
+		level, err := zerolog.ParseLevel(config.EnvLogLevel())
+		if err == nil {
+			zerolog.SetGlobalLevel(level)
+		}
 
-	output := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
-	Log = zerolog.New(output).With().Timestamp().Logger()
+		output := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
+		Log = zerolog.New(output).With().Timestamp().Logger()
+	})
 }

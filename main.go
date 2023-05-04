@@ -13,7 +13,7 @@ import (
 
 func main() {
 	config.EnvLoad()
-	logger.LoggerSetup()
+	logger.New()
 
 	connections.NewWriter()
 	connections.NewReaders()
