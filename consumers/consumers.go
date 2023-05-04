@@ -26,9 +26,9 @@ func RunConsumer(conn *kafka.Reader, callback func(m kafka.Message)) {
 }
 
 func RunConsumers() {
-	go RunConsumer(connections.KafkaReaderLedger, indexer.Test)
-	go RunConsumer(connections.KafkaReaderTransaction, indexer.PrintMessage)
-	go RunConsumer(connections.KafkaReaderValidation, indexer.PrintMessage)
+	go RunConsumer(connections.KafkaReaderLedger, indexer.IndexLedger)
+	go RunConsumer(connections.KafkaReaderTransaction, indexer.IndexTransaction)
+	go RunConsumer(connections.KafkaReaderValidation, indexer.IndexValidation)
 	go RunConsumer(connections.KafkaReaderPeerStatus, indexer.PrintMessage)
 	go RunConsumer(connections.KafkaReaderConsensus, indexer.PrintMessage)
 	go RunConsumer(connections.KafkaReaderPathFind, indexer.PrintMessage)

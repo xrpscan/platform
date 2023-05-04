@@ -1,8 +1,11 @@
 package indexer
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 
+	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/connections"
 	"github.com/xrpscan/platform/logger"
@@ -22,4 +25,20 @@ func Test(m kafka.Message) {
 	}
 	res, _ := connections.XrplClient.Request(req)
 	fmt.Println("Response:", res)
+}
+
+func Index(req esapi.IndexRequest) {
+	ctx := context.Background()
+	res, err := req.Do(ctx, connections.GetEsClient())
+	if err != nil {
+		logger.Log.Error().Err(err).Msg("Error indexing document")
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		var e map[string]interface{}
+		if err := json.NewDecoder(res.Body).Decode(&e); err != nil {
+			logger.Log.Error().Err(err).Msg("Error decoding index error message")
+		}
+	}
 }
