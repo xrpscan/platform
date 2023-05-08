@@ -17,7 +17,7 @@ func ProduceValidation(w *kafka.Writer, message []byte) {
 		return
 	}
 
-	messageKey := fmt.Sprintf("%s.%s", res["validation_public_key"], res["ledger_index"])
+	messageKey := fmt.Sprintf("%s.%s.%s", res["validation_public_key"], res["ledger_index"], res["cookie"])
 
 	err := w.WriteMessages(context.Background(),
 		kafka.Message{
