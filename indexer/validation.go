@@ -1,10 +1,13 @@
 package indexer
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
 	"strings"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/elastic/go-elasticsearch/v8/esutil"
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/logger"
 	"github.com/xrpscan/platform/models"
@@ -26,4 +29,25 @@ func IndexValidation(m kafka.Message) {
 		Body:       strings.NewReader(string(message)),
 	}
 	Index(req)
+}
+
+func BulkIndexValidation(ch <-chan kafka.Message) {
+	bulk, _ := NewBulkIndexClient(models.StreamValidation.String())
+
+	// Bulk index channel reader loop
+	for {
+		message := <-ch
+
+		err := bulk.Add(
+			context.Background(),
+			esutil.BulkIndexerItem{
+				Action:     "index",
+				DocumentID: string(message.Key),
+				Body:       bytes.NewReader(message.Value),
+			},
+		)
+		if err != nil {
+			logger.Log.Error().Err(err).Msg("Error adding documents to bulk indexer")
+		}
+	}
 }
