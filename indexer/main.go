@@ -11,7 +11,7 @@ import (
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/connections"
 	"github.com/xrpscan/platform/logger"
-	"github.com/xrpscan/platform/xrpl"
+	"github.com/xrpscan/xrpl-go"
 )
 
 func PrintMessage(m kafka.Message) {

@@ -9,7 +9,7 @@ import (
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/config"
 	"github.com/xrpscan/platform/connections"
-	"github.com/xrpscan/platform/xrpl"
+	"github.com/xrpscan/xrpl-go"
 )
 
 func SubscribeStreams() {

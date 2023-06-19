@@ -8,7 +8,7 @@ import (
 
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/config"
-	"github.com/xrpscan/platform/xrpl"
+	"github.com/xrpscan/xrpl-go"
 )
 
 func ProduceValidation(w *kafka.Writer, message []byte) {

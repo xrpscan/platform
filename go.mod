@@ -10,6 +10,7 @@ require (
 	github.com/labstack/echo/v4 v4.10.0
 	github.com/rs/zerolog v1.29.1
 	github.com/segmentio/kafka-go v0.4.39
+	github.com/xrpscan/xrpl-go v0.1.0
 )
 
 require (

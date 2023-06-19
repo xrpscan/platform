@@ -2,7 +2,7 @@ package connections
 
 import (
 	"github.com/xrpscan/platform/config"
-	"github.com/xrpscan/platform/xrpl"
+	"github.com/xrpscan/xrpl-go"
 )
 
 var XrplClient *xrpl.Client

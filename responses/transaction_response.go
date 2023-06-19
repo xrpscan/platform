@@ -2,7 +2,7 @@ package responses
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/xrpscan/platform/xrpl"
+	"github.com/xrpscan/xrpl-go"
 )
 
 type TransactionResponse struct {

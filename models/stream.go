@@ -3,7 +3,7 @@ package models
 import (
 	"strconv"
 
-	"github.com/xrpscan/platform/xrpl"
+	"github.com/xrpscan/xrpl-go"
 )
 
 type Stream int8

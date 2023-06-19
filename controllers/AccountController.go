@@ -8,7 +8,7 @@ import (
 	"github.com/xrpscan/platform/connections"
 	"github.com/xrpscan/platform/producers"
 	"github.com/xrpscan/platform/responses"
-	"github.com/xrpscan/platform/xrpl"
+	"github.com/xrpscan/xrpl-go"
 )
 
 func GetAccountInfo(c echo.Context) error {
