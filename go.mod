@@ -1,11 +1,10 @@
 module github.com/xrpscan/platform
 
-go 1.18
+go 1.20
 
 require (
 	github.com/elastic/go-elasticsearch/v8 v8.6.0
 	github.com/google/uuid v1.3.0
-	github.com/gorilla/websocket v1.5.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.10.0
 	github.com/rs/zerolog v1.29.1
@@ -15,6 +14,7 @@ require (
 
 require (
 	github.com/elastic/elastic-transport-go/v8 v8.0.0-20211216131617-bbee439d559c // indirect
+	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/klauspost/compress v1.15.9 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

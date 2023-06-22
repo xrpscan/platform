@@ -17,17 +17,13 @@ func SubscribeStreams() {
 		xrpl.StreamTypeLedger,
 		xrpl.StreamTypeTransaction,
 		xrpl.StreamTypeValidations,
-		xrpl.StreamTypePeerStatus,
-		xrpl.StreamTypeConsensus,
-		xrpl.StreamTypePathFind,
-		xrpl.StreamTypeManifests,
-		xrpl.StreamTypeServer,
 	})
 
 	for {
 		select {
 		case ledger := <-connections.XrplClient.StreamLedger:
 			ProduceLedger(connections.KafkaWriter, ledger)
+			ProduceTx(connections.KafkaWriter, ledger)
 
 		case validation := <-connections.XrplClient.StreamValidation:
 			ProduceValidation(connections.KafkaWriter, validation)
