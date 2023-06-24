@@ -47,8 +47,7 @@ func RunBulkConsumer(conn *kafka.Reader, callback func(<-chan kafka.Message)) {
 
 // Run all consumers
 func RunConsumers() {
-	go RunConsumer(connections.KafkaReaderLedger, indexer.IndexLedger)
-
+	go RunBulkConsumer(connections.KafkaReaderLedger, indexer.BulkIndexLedger)
 	go RunBulkConsumer(connections.KafkaReaderValidation, indexer.BulkIndexValidation)
 	go RunBulkConsumer(connections.KafkaReaderTransaction, indexer.BulkIndexTransaction)
 
