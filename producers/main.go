@@ -9,15 +9,24 @@ import (
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/config"
 	"github.com/xrpscan/platform/connections"
+	"github.com/xrpscan/platform/logger"
 	"github.com/xrpscan/xrpl-go"
 )
 
 func SubscribeStreams() {
-	connections.XrplClient.Subscribe([]string{
+	response, err := connections.XrplClient.Subscribe([]string{
 		xrpl.StreamTypeLedger,
 		xrpl.StreamTypeTransaction,
 		xrpl.StreamTypeValidations,
 	})
+	if err != nil {
+		logger.Log.Error().Err(err).Msg("xrpl.Subscribe")
+	}
+	if response["status"].(string) == "error" {
+		logger.Log.Error().Any("error", response["error"]).Any("id", response["id"]).Any("error_message", response["error_message"]).Msg("xrpl.Subscribe")
+	} else {
+		logger.Log.Debug().Any("status", response["status"]).Any("id", response["id"]).Any("result", response["result"]).Msg("xrpl.Subscribe")
+	}
 
 	for {
 		select {
