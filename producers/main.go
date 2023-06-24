@@ -13,10 +13,18 @@ import (
 	"github.com/xrpscan/xrpl-go"
 )
 
+/*
+* TLDR - Do not subscribe to xrpl.StreamTypeTransactions
+*
+* XRPL `transaction` stream messages are incompatible with rippled's native
+* transaction format. Therefore, this service does not process transactions
+* streamed on `xrpl.StreamTypeTransactions` stream. Instead, we listen to the
+* ledger stream, fetch transactions from rippled, and add those transactions to
+* the Kafka topic.
+ */
 func SubscribeStreams() {
 	response, err := connections.XrplClient.Subscribe([]string{
 		xrpl.StreamTypeLedger,
-		xrpl.StreamTypeTransaction,
 		xrpl.StreamTypeValidations,
 	})
 	if err != nil {
@@ -32,13 +40,10 @@ func SubscribeStreams() {
 		select {
 		case ledger := <-connections.XrplClient.StreamLedger:
 			ProduceLedger(connections.KafkaWriter, ledger)
-			ProduceTx(connections.KafkaWriter, ledger)
+			ProduceTransaction(connections.KafkaWriter, ledger)
 
 		case validation := <-connections.XrplClient.StreamValidation:
 			ProduceValidation(connections.KafkaWriter, validation)
-
-		case transaction := <-connections.XrplClient.StreamTransaction:
-			ProduceTransaction(connections.KafkaWriter, transaction)
 
 		case peerStatus := <-connections.XrplClient.StreamPeerStatus:
 			Produce(connections.KafkaWriter, peerStatus, config.TopicPeerStatus())

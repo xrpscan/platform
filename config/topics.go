@@ -4,13 +4,6 @@ import "fmt"
 
 const serviceName = "platform"
 
-// Kafka topic for transaction objects retrieved from XRPL objects.
-// Transaction object format used by rippled's ledger, tx and other commands is
-// not the same as xrpl.StreamTypeTransaction messages.
-func TopicTx() string {
-	return fmt.Sprintf("%s-%s-tx", EnvKafkaTopicNamespace(), serviceName)
-}
-
 // Kafka topic for streaming xrpl.StreamTypeLedger messages
 func TopicLedgers() string {
 	return fmt.Sprintf("%s-%s-ledgers", EnvKafkaTopicNamespace(), serviceName)
