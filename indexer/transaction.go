@@ -38,12 +38,18 @@ func BulkIndexTransaction(ch <-chan kafka.Message) {
 	for {
 		message := <-ch
 
-		err := bulk.Add(
+		fixedMessage, err := FixTransactionObject(message.Value)
+		if err != nil {
+			logger.Log.Error().Err(err).Msg("Error fixing transaction object")
+			return
+		}
+
+		err = bulk.Add(
 			context.Background(),
 			esutil.BulkIndexerItem{
 				Action:     "index",
 				DocumentID: string(message.Key),
-				Body:       bytes.NewReader(message.Value),
+				Body:       bytes.NewReader(fixedMessage),
 				OnFailure: func(ctx context.Context, item esutil.BulkIndexerItem, res esutil.BulkIndexerResponseItem, err error) {
 					if err != nil {
 						logger.Log.Trace().Err(err).Msg("Bulk index error")

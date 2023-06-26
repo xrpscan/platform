@@ -3,44 +3,39 @@ package producers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"strconv"
 
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/config"
-	"github.com/xrpscan/platform/connections"
 	"github.com/xrpscan/platform/logger"
+	"github.com/xrpscan/platform/models"
 	"github.com/xrpscan/xrpl-go"
 )
 
-func FetchTransaction(ledgerIndex string) (xrpl.BaseResponse, error) {
-	requestId := fmt.Sprintf("ledger.%s.tx", ledgerIndex)
-	request := xrpl.BaseRequest{
-		"id":           requestId,
-		"command":      "ledger",
-		"ledger_index": ledgerIndex,
-		"transactions": true,
-		"expand":       true,
-	}
-	response, err := connections.XrplClient.Request(request)
-	if err != nil {
-		return nil, err
-	}
-	return response, nil
-}
-
-func ProduceTransaction(w *kafka.Writer, message []byte) {
+/*
+* Verifies structure of `ledger` websocket command, iterates over `transactions`
+* slice, and calls ProduceTransaction for each transaction object.
+*
+* These transaction objects have slightly different structure, as compared to
+* transactions returned via `tx` and `account_tx` commands.
+ */
+func ProduceTransactions(w *kafka.Writer, message []byte) {
 	var res xrpl.BaseResponse
 	if err := json.Unmarshal(message, &res); err != nil {
+		logger.Log.Error().Err(err).Msg("JSON Unmarshal error")
 		return
 	}
 	ledgerIndex := strconv.Itoa(int(res["ledger_index"].(float64)))
 
-	txResponse, err := FetchTransaction(ledgerIndex)
+	// Fetch all transactions included in this ledger from rippled
+	txResponse, err := models.FetchTransaction(ledgerIndex)
 	if err != nil {
-		logger.Log.Error().Str("ledger_index", ledgerIndex).Msg(err.Error())
+		logger.Log.Error().Str("ledger_index", ledgerIndex).Err(err).Msg(err.Error())
+		return
 	}
+
+	// Verify if result.ledger.transactions property is present
 	txResult, ok := txResponse["result"].(map[string]interface{})
 	if !ok {
 		logger.Log.Error().Str("ledger_index", ledgerIndex).Msg("Tx response has no result property")
@@ -57,33 +52,40 @@ func ProduceTransaction(w *kafka.Writer, message []byte) {
 		return
 	}
 
+	// Iterate over transactions slice and submit each transaction to Kafka topic
 	for _, tx := range txs {
-		txObject, ok := tx.(map[string]interface{})
-		if !ok {
-			logger.Log.Error().Str("ledger_index", ledgerIndex).Msg("Tx object refused to typecast")
-			return
-		}
-		messageKey, ok := txObject["hash"].(string)
-		if !ok {
-			logger.Log.Error().Str("ledger_index", ledgerIndex).Msg("Tx object has no hash")
-			return
-		}
-		message, err := json.Marshal(txObject)
+		txJSON, err := json.Marshal(tx)
 		if err != nil {
-			log.Printf("Failed to Marshal tx object: %s", err)
+			logger.Log.Error().Str("ledger_index", ledgerIndex).Err(err).Msg("Error Marshaling transaction")
 			return
 		}
+		ProduceTransaction(w, txJSON)
+	}
+}
 
-		// Write to Kafka topic config.TopicTx()
-		err = w.WriteMessages(context.Background(),
-			kafka.Message{
-				Topic: config.TopicTransactions(),
-				Key:   []byte(messageKey),
-				Value: message,
-			},
-		)
-		if err != nil {
-			log.Printf("Failed to write message: %s", err)
-		}
+/*
+* Submits transaction object to Kafka
+ */
+func ProduceTransaction(w *kafka.Writer, message []byte) {
+	var res xrpl.BaseResponse
+	if err := json.Unmarshal(message, &res); err != nil {
+		return
+	}
+
+	messageKey, ok := res["hash"].(string)
+	if !ok {
+		logger.Log.Error().Msg("Tx object has no hash, aborting.")
+		return
+	}
+
+	err := w.WriteMessages(context.Background(),
+		kafka.Message{
+			Topic: config.TopicTransactions(),
+			Key:   []byte(messageKey),
+			Value: message,
+		},
+	)
+	if err != nil {
+		log.Printf("Failed to write message: %s", err)
 	}
 }

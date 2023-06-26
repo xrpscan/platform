@@ -40,7 +40,7 @@ func SubscribeStreams() {
 		select {
 		case ledger := <-connections.XrplClient.StreamLedger:
 			ProduceLedger(connections.KafkaWriter, ledger)
-			ProduceTransaction(connections.KafkaWriter, ledger)
+			ProduceTransactions(connections.KafkaWriter, ledger)
 
 		case validation := <-connections.XrplClient.StreamValidation:
 			ProduceValidation(connections.KafkaWriter, validation)
