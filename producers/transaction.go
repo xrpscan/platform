@@ -29,7 +29,7 @@ func ProduceTransactions(w *kafka.Writer, message []byte) {
 	ledgerIndex := strconv.Itoa(int(res["ledger_index"].(float64)))
 
 	// Fetch all transactions included in this ledger from rippled
-	txResponse, err := models.FetchTransaction(ledgerIndex)
+	txResponse, err := models.FetchTransactions(ledgerIndex)
 	if err != nil {
 		logger.Log.Error().Str("ledger_index", ledgerIndex).Err(err).Msg(err.Error())
 		return
