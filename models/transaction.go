@@ -144,7 +144,7 @@ type Transaction struct {
 	TakerPays Currency `json:"TakerPays,omitempty"`
 
 	// Payment fields - https://xrpl.org/payment.html#payment-fields
-	Amount         uint64   `json:"Amount,omitempty"`
+	Amount         Currency `json:"Amount,omitempty"`
 	Destination    string   `json:"Destination,omitempty"`
 	DestinationTag int      `json:"DestinationTag,omitempty"`
 	InvoiceID      string   `json:"InvoiceID,omitempty"`
