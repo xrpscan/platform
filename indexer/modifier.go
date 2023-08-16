@@ -13,7 +13,8 @@ type MapStringInterface map[string]interface{}
 // Modify transacion object to normalize Amount-like and other fields.
 func ModifyTransaction(transaction []byte) ([]byte, error) {
 	// Unmarshal transaction and handle it as map[string]interface{}
-	var tx MapStringInterface
+	var tx map[string]interface{}
+
 	if err := json.Unmarshal(transaction, &tx); err != nil {
 		logger.Log.Error().Err(err).Msg("JSON Unmarshal error in ModifyTransaction")
 		return transaction, err

@@ -1,12 +1,5 @@
 package models
 
-import (
-	"fmt"
-
-	"github.com/xrpscan/platform/connections"
-	"github.com/xrpscan/xrpl-go"
-)
-
 type Transaction struct {
 	// Transaction response fields - https://xrpl.org/tx.html#response-format
 	Date        uint32 `json:"date,omitempty"`
@@ -213,21 +206,4 @@ type Transaction struct {
 	NFTokenID      string `json:"NFTokenID,omitempty"`
 	Expiration     uint32 `json:"Expiration,omitempty"`
 	OfferSequence  uint32 `json:"OfferSequence,omitempty"`
-}
-
-// Fetches all transaction for a specific ledger_index from rippled
-func FetchTransactions(ledgerIndex string) (xrpl.BaseResponse, error) {
-	requestId := fmt.Sprintf("ledger.%s.tx", ledgerIndex)
-	request := xrpl.BaseRequest{
-		"id":           requestId,
-		"command":      "ledger",
-		"ledger_index": ledgerIndex,
-		"transactions": true,
-		"expand":       true,
-	}
-	response, err := connections.XrplClient.Request(request)
-	if err != nil {
-		return nil, err
-	}
-	return response, nil
 }
