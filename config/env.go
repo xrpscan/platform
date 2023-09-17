@@ -7,10 +7,16 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func EnvLoad() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+func EnvLoad(filenames ...string) {
+	if len(filenames) == 0 {
+		filenames = append(filenames, ".env")
+	}
+	for _, filename := range filenames {
+		log.Printf("Loading configuration file: %s", filename)
+		err := godotenv.Load(filename)
+		if err != nil {
+			log.Fatalf("Error loading configuration file: %s", filename)
+		}
 	}
 }
 
