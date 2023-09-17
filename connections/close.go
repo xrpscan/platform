@@ -4,8 +4,13 @@ import (
 	"log"
 )
 
-func CloseAll() {
-	log.Println("Closing all connections")
+func CloseWriter() {
+	if err := KafkaWriter.Close(); err != nil {
+		log.Println("Error closing Kafka writer connection")
+	}
+}
+
+func CloseReaders() {
 	if err := KafkaReaderLedger.Close(); err != nil {
 		log.Println("Error closing Kafka Ledger reader connection")
 	}
@@ -41,12 +46,21 @@ func CloseAll() {
 	if err := KafkaReaderDefault.Close(); err != nil {
 		log.Println("Error closing Kafka Default reader connection")
 	}
+}
 
-	if err := KafkaWriter.Close(); err != nil {
-		log.Println("Error closing Kafka writer connection")
-	}
+func CloseEsClient() {
+}
 
+func CloseXrplClient() {
 	if err := XrplClient.Close(); err != nil {
 		log.Println("Error closing xrpl connection")
 	}
+}
+
+func CloseAll() {
+	log.Println("Closing all connections")
+	CloseWriter()
+	CloseReaders()
+	CloseEsClient()
+	CloseXrplClient()
 }
