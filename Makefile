@@ -1,7 +1,14 @@
+SERVICE_NAME=platform
+BIN_DIR=bin
+MKDIR=mkdir -p
+
+all: build
+
 build:
-	go build -o platform main.go 
-	go build -o backfill cmd/backfill/backfill.go
+	${MKDIR} ${BIN_DIR}
+	go build -o ${BIN_DIR}/${SERVICE_NAME}-server main.go
+	go build -o ${BIN_DIR}/${SERVICE_NAME}-cli cmd/cli/main.go
 
 clean:
 	go clean
-	rm backfill
+	rm -rf ${BIN_DIR}
