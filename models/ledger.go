@@ -59,9 +59,6 @@ func (ledger *LedgerStream) Validate() error {
 	if ledger.LedgerIndex < GENESIS_LEDGER {
 		return errors.New("invalid ledger_index")
 	}
-	if len(ledger.LedgerHash) != 64 {
-		return errors.New("invalid ledger_hash")
-	}
 	return nil
 }
 
