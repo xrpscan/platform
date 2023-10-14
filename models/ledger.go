@@ -10,7 +10,7 @@ import (
 )
 
 // XRPL Genesis ledger is 32570 - https://xrpscan.com/ledger/32570
-const GENESIS_LEDGER uint32 = 32570
+const GENESIS_LEDGER uint32 = 0
 
 // LedgerStream type is constant 'ledgerClosed' - https://xrpl.org/subscribe.html#ledger-stream
 const LEDGER_STREAM_TYPE string = "ledgerClosed"
