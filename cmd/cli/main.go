@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"log"
 
 	"github.com/xrpscan/platform/config"
@@ -16,34 +15,53 @@ import (
 const defaultIndexFrom int = 82000000
 const defaultIndexTo int = 82001000
 
-var indexFrom int
-var indexTo int
-var configFile string
+var fIndexFrom int
+var fIndexTo int
+var fConfigFile string
+var fVerbose bool
+var fXrplServer string
+
+func setFlags() {
+	flag.IntVar(&fIndexFrom, "from", defaultIndexFrom, "From ledger index")
+	flag.IntVar(&fIndexTo, "to", defaultIndexTo, "To ledger index")
+	flag.StringVar(&fConfigFile, "config", ".env", "Environment config file")
+	flag.BoolVar(&fVerbose, "verbose", false, "Make the command more talkative")
+	flag.StringVar(&fXrplServer, "server", "", "XRPL protocol compatible server to connect")
+	flag.Parse()
+}
+
+func clog(message ...string) {
+	if fVerbose {
+		log.Println(message)
+	}
+}
 
 func main() {
-	flag.IntVar(&indexFrom, "from", defaultIndexFrom, "From ledger index")
-	flag.IntVar(&indexTo, "to", defaultIndexTo, "To ledger index")
-	flag.StringVar(&configFile, "config", ".env", "Environment config file")
-	flag.Parse()
-
-	fmt.Printf("Using environment config file %s\n", configFile)
-	config.EnvLoad(configFile)
+	setFlags()
+	clog("Using environment config file: ", fConfigFile)
+	config.EnvLoad(fConfigFile)
 
 	// Ledgers are backfilled in chronological order. Therefore, --from ledger
 	// index must be less than --to ledger index.
-	if indexFrom > indexTo {
+	if fIndexFrom > fIndexTo {
 		log.Fatalf("From ledger (%d) must be less than To ledger (%d)\n",
-			indexFrom,
-			indexTo)
+			fIndexFrom,
+			fIndexTo)
+	}
+
+	// If websocket url is not provided in the cli, use the url from environment
+	wsURL := fXrplServer
+	if wsURL == "" {
+		wsURL = config.EnvXrplWebsocketURL()
 	}
 
 	// Initialize connections to services
 	logger.New()
 	connections.NewWriter()
-	connections.NewXrplClient()
+	connections.NewXrplClientWithURL(wsURL)
 
 	// Fetch ledger and queue transactions for indexing
-	for ledgerIndex := indexFrom; ledgerIndex <= indexTo; ledgerIndex++ {
+	for ledgerIndex := fIndexFrom; ledgerIndex <= fIndexTo; ledgerIndex++ {
 		backfillLedger(ledgerIndex)
 	}
 
@@ -58,5 +76,11 @@ func backfillLedger(ledgerIndex int) {
 		LedgerIndex: uint32(ledgerIndex),
 	}
 	ledgerJSON, _ := json.Marshal(ledger)
+	producers.ProduceLedger(connections.KafkaWriter, ledgerJSON)
+	backfillTransactions(ledgerJSON)
+}
+
+func backfillTransactions(ledgerJSON []byte) {
+	log.Println("Backfilling transactions in ledger")
 	producers.ProduceTransactions(connections.KafkaWriter, ledgerJSON)
 }

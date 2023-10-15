@@ -8,8 +8,12 @@ import (
 var XrplClient *xrpl.Client
 
 func NewXrplClient() {
-	XrplClient = xrpl.NewClient(xrpl.ClientConfig{URL: config.EnvRippledURL()})
-	err := XrplClient.Ping([]byte(config.EnvRippledURL()))
+	NewXrplClientWithURL(config.EnvXrplWebsocketURL())
+}
+
+func NewXrplClientWithURL(URL string) {
+	XrplClient = xrpl.NewClient(xrpl.ClientConfig{URL: URL})
+	err := XrplClient.Ping([]byte(URL))
 	if err != nil {
 		panic(err)
 	}

@@ -35,14 +35,14 @@ func EnvLogType() string {
 }
 
 /*
-* Rippled settings
+* XRPL protocol (compatible) server settings
  */
-func EnvRippledURL() string {
-	return os.Getenv("RIPPLED_URL")
+func EnvXrplWebsocketURL() string {
+	return os.Getenv("XRPL_WEBSOCKET_URL")
 }
 
-func EnvRippledFullHistoryURL() string {
-	return os.Getenv("RIPPLED_FULLHISTORY_URL")
+func EnvXrplWebsocketFullHistoryURL() string {
+	return os.Getenv("XRPL_WEBSOCKET_FULLHISTORY_URL")
 }
 
 /*

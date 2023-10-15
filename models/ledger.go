@@ -62,7 +62,7 @@ func (ledger *LedgerStream) Validate() error {
 	return nil
 }
 
-// Fetches all transaction for a specific ledger from rippled
+// Fetches all transaction for a specific ledger from XRPL server
 func (ledger *LedgerStream) FetchTransactions() (xrpl.BaseResponse, error) {
 	if err := ledger.Validate(); err != nil {
 		return nil, errors.New("invalid ledger_index")

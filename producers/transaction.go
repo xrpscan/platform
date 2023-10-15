@@ -35,7 +35,7 @@ func ProduceTransactions(w *kafka.Writer, message []byte) {
 
 	// Type check ledger object in message and call Ledger.FetchTransactions on it
 
-	// Fetch all transactions included in this ledger from rippled
+	// Fetch all transactions included in this ledger from XRPL server
 	txResponse, err := ledger.FetchTransactions()
 	if err != nil {
 		logger.Log.Error().Uint32("ledger_index", ledger.LedgerIndex).Err(err).Msg(err.Error())
