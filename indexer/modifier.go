@@ -5,6 +5,7 @@ import (
 
 	"github.com/xrpscan/platform/logger"
 	"github.com/xrpscan/platform/models"
+	"github.com/xrpscan/xrpl-go"
 )
 
 // Raw transaction object represented as a map-string-interface
@@ -20,15 +21,22 @@ func ModifyTransaction(transaction []byte) ([]byte, error) {
 		return transaction, err
 	}
 
+	// Detect network from NetworkID field. Default is XRPL Mainnet
+	network := xrpl.NetworkXrplMainnet
+	networkId, ok := tx["NetworkID"].(int)
+	if ok {
+		network = xrpl.GetNetwork(networkId)
+	}
+
 	// Modify Amount-like fields listed in models.AmountFields
 	for _, field := range models.AmountFields {
-		ModifyAmount(tx, field.String())
+		ModifyAmount(tx, field.String(), network)
 	}
 
 	// Rename tx.metaData property to tx.meta
 	metaDataField := "metaData"
-	_, ok := tx[metaDataField]
-	if ok {
+	_, ok2 := tx[metaDataField]
+	if ok2 {
 		tx["meta"] = tx[metaDataField]
 		delete(tx, metaDataField)
 	}
@@ -39,8 +47,8 @@ func ModifyTransaction(transaction []byte) ([]byte, error) {
 		// For simplicity, AffectedNodes field is dropped. This field may indexed
 		// in a future release after due consideration.
 		delete(meta, "AffectedNodes")
-		ModifyAmount(meta, models.DeliveredAmount.String())
-		ModifyAmount(meta, models.Delivered_Amount.String())
+		ModifyAmount(meta, models.DeliveredAmount.String(), network)
+		ModifyAmount(meta, models.Delivered_Amount.String(), network)
 		tx["meta"] = meta
 	}
 
@@ -53,10 +61,10 @@ func ModifyTransaction(transaction []byte) ([]byte, error) {
 	return result, nil
 }
 
-func ModifyAmount(tx MapStringInterface, field string) error {
+func ModifyAmount(tx MapStringInterface, field string, network xrpl.Network) error {
 	value, ok := tx[field].(string)
 	if ok {
-		tx[field] = MapStringInterface{"currency": models.XRP, "value": value}
+		tx[field] = MapStringInterface{"currency": network.Asset(), "value": value}
 	}
 	return nil
 }
