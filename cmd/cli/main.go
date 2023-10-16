@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"log"
+	"time"
 
 	"github.com/xrpscan/platform/config"
 	"github.com/xrpscan/platform/connections"
@@ -14,12 +15,14 @@ import (
 
 const defaultIndexFrom int = 82000000
 const defaultIndexTo int = 82001000
+const defaultMinDelay int64 = 100 // milliseconds
 
 var fIndexFrom int
 var fIndexTo int
 var fConfigFile string
 var fVerbose bool
 var fXrplServer string
+var fMinDelay int64
 
 func setFlags() {
 	flag.IntVar(&fIndexFrom, "from", defaultIndexFrom, "From ledger index")
@@ -27,6 +30,7 @@ func setFlags() {
 	flag.StringVar(&fConfigFile, "config", ".env", "Environment config file")
 	flag.BoolVar(&fVerbose, "verbose", false, "Make the command more talkative")
 	flag.StringVar(&fXrplServer, "server", "", "XRPL protocol compatible server to connect")
+	flag.Int64Var(&fMinDelay, "delay", defaultMinDelay, "Minimum delay (ms) between requests to XRPL server")
 	flag.Parse()
 }
 
@@ -62,7 +66,15 @@ func main() {
 
 	// Fetch ledger and queue transactions for indexing
 	for ledgerIndex := fIndexFrom; ledgerIndex <= fIndexTo; ledgerIndex++ {
+		startTime := time.Now().UnixNano() / int64(time.Millisecond)
 		backfillLedger(ledgerIndex)
+		reqDuration := time.Now().UnixNano()/int64(time.Millisecond) - startTime
+
+		// Honor fair usage policy and wait before sending next request
+		delayRequired := fMinDelay - reqDuration
+		if delayRequired > 0 {
+			time.Sleep(time.Duration(delayRequired) * time.Millisecond)
+		}
 	}
 
 	connections.CloseWriter()
@@ -81,6 +93,5 @@ func backfillLedger(ledgerIndex int) {
 }
 
 func backfillTransactions(ledgerJSON []byte) {
-	log.Println("Backfilling transactions in ledger")
 	producers.ProduceTransactions(connections.KafkaWriter, ledgerJSON)
 }
