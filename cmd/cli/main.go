@@ -11,6 +11,7 @@ import (
 	"github.com/xrpscan/platform/logger"
 	"github.com/xrpscan/platform/models"
 	"github.com/xrpscan/platform/producers"
+	"github.com/xrpscan/platform/signals"
 )
 
 const defaultIndexFrom int = 82000000
@@ -58,6 +59,9 @@ func main() {
 	if wsURL == "" {
 		wsURL = config.EnvXrplWebsocketURL()
 	}
+
+	// Register command line signal handlers to gracefully shutdown cli
+	signals.HandleAll()
 
 	// Initialize connections to services
 	logger.New()

@@ -5,46 +5,76 @@ import (
 )
 
 func CloseWriter() {
-	if err := KafkaWriter.Close(); err != nil {
-		log.Println("Error closing Kafka writer connection")
+	if KafkaWriter != nil {
+		err := KafkaWriter.Close()
+		if err != nil {
+			log.Println("Error closing Kafka writer connection")
+		}
 	}
 }
 
 func CloseReaders() {
-	if err := KafkaReaderLedger.Close(); err != nil {
-		log.Println("Error closing Kafka Ledger reader connection")
+	if KafkaReaderLedger != nil {
+		err := KafkaReaderLedger.Close()
+		if err != nil {
+			log.Println("Error closing Kafka Ledger reader connection")
+		}
 	}
 
-	if err := KafkaReaderTransaction.Close(); err != nil {
-		log.Println("Error closing Kafka Transaction reader connection")
+	if KafkaReaderTransaction != nil {
+		err := KafkaReaderTransaction.Close()
+		if err != nil {
+			log.Println("Error closing Kafka Transaction reader connection")
+		}
 	}
 
-	if err := KafkaReaderValidation.Close(); err != nil {
-		log.Println("Error closing Kafka Validation reader connection")
+	if KafkaReaderValidation != nil {
+		err := KafkaReaderValidation.Close()
+		if err != nil {
+			log.Println("Error closing Kafka Validation reader connection")
+		}
 	}
 
-	if err := KafkaReaderPeerStatus.Close(); err != nil {
-		log.Println("Error closing Kafka PeerStatus reader connection")
+	if KafkaReaderPeerStatus != nil {
+		err := KafkaReaderPeerStatus.Close()
+		if err != nil {
+			log.Println("Error closing Kafka PeerStatus reader connection")
+		}
 	}
 
-	if err := KafkaReaderConsensus.Close(); err != nil {
-		log.Println("Error closing Kafka Consensus reader connection")
+	if KafkaReaderConsensus != nil {
+		err := KafkaReaderConsensus.Close()
+		if err != nil {
+			log.Println("Error closing Kafka Consensus reader connection")
+		}
 	}
 
-	if err := KafkaReaderPathFind.Close(); err != nil {
-		log.Println("Error closing Kafka PathFind reader connection")
+	if KafkaReaderPathFind != nil {
+		err := KafkaReaderPathFind.Close()
+		if err != nil {
+			log.Println("Error closing Kafka PathFind reader connection")
+		}
 	}
 
-	if err := KafkaReaderManifest.Close(); err != nil {
-		log.Println("Error closing Kafka Manifest reader connection")
+	if KafkaReaderManifest != nil {
+		err := KafkaReaderManifest.Close()
+		if err != nil {
+			log.Println("Error closing Kafka Manifest reader connection")
+		}
 	}
 
-	if err := KafkaReaderServer.Close(); err != nil {
-		log.Println("Error closing Kafka Server reader connection")
+	if KafkaReaderServer != nil {
+		err := KafkaReaderServer.Close()
+		if err != nil {
+			log.Println("Error closing Kafka Server reader connection")
+		}
 	}
 
-	if err := KafkaReaderDefault.Close(); err != nil {
-		log.Println("Error closing Kafka Default reader connection")
+	if KafkaReaderDefault != nil {
+		err := KafkaReaderDefault.Close()
+		if err != nil {
+			log.Println("Error closing Kafka Default reader connection")
+		}
 	}
 }
 
@@ -52,8 +82,11 @@ func CloseEsClient() {
 }
 
 func CloseXrplClient() {
-	if err := XrplClient.Close(); err != nil {
-		log.Println("Error closing xrpl connection")
+	if XrplClient != nil {
+		err := XrplClient.Close()
+		if err != nil {
+			log.Println("Error closing xrpl connection")
+		}
 	}
 }
 
