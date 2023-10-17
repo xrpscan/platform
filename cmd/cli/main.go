@@ -63,6 +63,8 @@ func main() {
 	logger.New()
 	connections.NewWriter()
 	connections.NewXrplClientWithURL(wsURL)
+	defer connections.CloseWriter()
+	defer connections.CloseXrplClient()
 
 	// Fetch ledger and queue transactions for indexing
 	for ledgerIndex := fIndexFrom; ledgerIndex <= fIndexTo; ledgerIndex++ {
@@ -76,9 +78,6 @@ func main() {
 			time.Sleep(time.Duration(delayRequired) * time.Millisecond)
 		}
 	}
-
-	connections.CloseWriter()
-	connections.CloseXrplClient()
 }
 
 func backfillLedger(ledgerIndex int) {
