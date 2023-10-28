@@ -78,15 +78,14 @@ func (cmd *BackfillCommand) Run() error {
 	config.EnvLoad(cmd.fConfigFile)
 
 	// If websocket url is not provided in the cli, use the url from environment
-	wsURL := cmd.fXrplServer
-	if wsURL == "" {
-		wsURL = config.EnvXrplWebsocketFullHistoryURL()
+	if cmd.fXrplServer == "" {
+		cmd.fXrplServer = config.EnvXrplWebsocketFullHistoryURL()
 	}
 
 	// Initialize connections to services
 	logger.New()
 	connections.NewWriter()
-	connections.NewXrplClientWithURL(wsURL)
+	connections.NewXrplClientWithURL(cmd.fXrplServer)
 	defer connections.CloseWriter()
 	defer connections.CloseXrplClient()
 
@@ -107,7 +106,7 @@ func (cmd *BackfillCommand) Run() error {
 
 // Worker functions
 func (cmd *BackfillCommand) backfillLedger(ledgerIndex int) {
-	log.Println("Backfilling ledger:", ledgerIndex)
+	log.Printf("[%s] Backfilling ledger: %d\n", cmd.fXrplServer, ledgerIndex)
 	ledger := models.LedgerStream{
 		Type:        models.LEDGER_STREAM_TYPE,
 		LedgerIndex: uint32(ledgerIndex),
