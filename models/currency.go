@@ -6,12 +6,14 @@ type Currency struct {
 	Currency string `json:"currency,omitempty"`
 	Issuer   string `json:"issuer,omitempty"`
 	Value    int64  `json:"value,omitempty"`
+	Native   bool   `json:"native,omitempty"`
 }
 
 type AmountField int8
 
 const (
 	Amount AmountField = iota
+	DeliverMax
 	DeliveredAmount
 	Delivered_Amount
 	DeliverMin
@@ -28,6 +30,8 @@ func (af AmountField) String() string {
 	switch af {
 	case Amount:
 		return "Amount"
+	case DeliverMax:
+		return "DeliverMax"
 	case DeliveredAmount:
 		return "DeliveredAmount"
 	case Delivered_Amount:
@@ -53,6 +57,7 @@ func (af AmountField) String() string {
 // A slice of all known Amount-like fields in XRPL transaction.
 var AmountFields = []AmountField{
 	Amount,
+	DeliverMax,
 	DeliveredAmount,
 	Delivered_Amount,
 	DeliverMin,

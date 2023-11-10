@@ -200,6 +200,9 @@ type Transaction struct {
 	UNLModifyDisabling uint8  `json:"UNLModifyDisabling,omitempty"`
 	UNLModifyValidator string `json:"UNLModifyValidator,omitempty"`
 
+	// Xahau Burn2Mint fields
+	OperationLimit string `json:"OperationLimit,omitempty"`
+
 	// Shared fields
 	Owner          string `json:"Owner,omitempty"`
 	LedgerSequence uint32 `json:"LedgerSequence,omitempty"`
