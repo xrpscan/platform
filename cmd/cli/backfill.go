@@ -27,11 +27,11 @@ const defaultMinDelay int64 = 100 // milliseconds
 type BackfillCommand struct {
 	fs          *flag.FlagSet
 	fConfigFile string
+	fXrplServer string
 	fIndexFrom  int
 	fIndexTo    int
-	fVerbose    bool
-	fXrplServer string
 	fMinDelay   int64
+	fVerbose    bool
 }
 
 func NewBackfillCommand() *BackfillCommand {
