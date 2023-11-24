@@ -64,6 +64,10 @@ func EnvKafkaTopicNamespace() string {
 * Elasticsearch settings
  */
 
+func EnvEsNamespace() string {
+	return os.Getenv("ELASTICSEARCH_NAMESPACE")
+}
+
 func EnvEsURL() string {
 	return os.Getenv("ELASTICSEARCH_URL")
 }

@@ -1,9 +1,6 @@
 package indexer
 
 import (
-	"encoding/json"
-
-	"github.com/xrpscan/platform/logger"
 	"github.com/xrpscan/platform/models"
 	"github.com/xrpscan/xrpl-go"
 )
@@ -12,20 +9,24 @@ import (
 type MapStringInterface map[string]interface{}
 
 // Modify transacion object to normalize Amount-like and other fields.
-func ModifyTransaction(transaction []byte) ([]byte, error) {
-	// Unmarshal transaction and handle it as map[string]interface{}
-	var tx map[string]interface{}
-
-	if err := json.Unmarshal(transaction, &tx); err != nil {
-		logger.Log.Error().Err(err).Msg("JSON Unmarshal error in ModifyTransaction")
-		return transaction, err
-	}
-
+func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error) {
 	// Detect network from NetworkID field. Default is XRPL Mainnet
 	network := xrpl.NetworkXrplMainnet
 	networkId, ok := tx["NetworkID"].(int)
 	if ok {
 		network = xrpl.GetNetwork(networkId)
+	}
+
+	// Modify Fee from string to uint64
+	fee, ok := tx["Fee"].(uint64)
+	if ok {
+		tx["Fee"] = fee
+	}
+
+	// Modify DestinationTag from integer to uint32
+	destinationTag, ok := tx["DestinationTag"].(uint32)
+	if ok {
+		tx["DestinationTag"] = destinationTag
 	}
 
 	// Modify Amount-like fields listed in models.AmountFields
@@ -52,13 +53,7 @@ func ModifyTransaction(transaction []byte) ([]byte, error) {
 		tx["meta"] = meta
 	}
 
-	// Marshal transaction object back to []byte
-	result, err := json.Marshal(tx)
-	if err != nil {
-		return nil, err
-	}
-
-	return result, nil
+	return tx, nil
 }
 
 func ModifyAmount(tx MapStringInterface, field string, network xrpl.Network) error {

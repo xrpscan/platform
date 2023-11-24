@@ -13,6 +13,7 @@ import (
 	"github.com/xrpscan/platform/models"
 )
 
+// Deprecated: This function does not support new IndexTemplate based indexing
 func IndexValidation(m kafka.Message) {
 	logger.Log.Debug().Str("topic", m.Topic).Int("partition", m.Partition).Int64("offset", m.Offset).Str("key", string(m.Key)).Msg("Indexing")
 
@@ -38,10 +39,18 @@ func BulkIndexValidation(ch <-chan kafka.Message) {
 	for {
 		message := <-ch
 
-		err := bulk.Add(
+		ledgerIndex, err := GetLedgerIndex(message.Value)
+		if err != nil {
+			logger.Log.Debug().Err(err).Msg("ledger_index not found in validation")
+			continue
+		}
+		indexName := GetIndexName(models.StreamValidation.String(), ledgerIndex)
+
+		err = bulk.Add(
 			context.Background(),
 			esutil.BulkIndexerItem{
 				Action:     "index",
+				Index:      indexName,
 				DocumentID: string(message.Key),
 				Body:       bytes.NewReader(message.Value),
 			},

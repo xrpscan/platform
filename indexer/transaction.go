@@ -13,6 +13,7 @@ import (
 	"github.com/xrpscan/platform/models"
 )
 
+// Deprecated: This function does not support new IndexTemplate based indexing
 func IndexTransaction(m kafka.Message) {
 	logger.Log.Debug().Str("topic", m.Topic).Int("partition", m.Partition).Int64("offset", m.Offset).Str("key", string(m.Key)).Msg("Indexing")
 
@@ -38,18 +39,43 @@ func BulkIndexTransaction(ch <-chan kafka.Message) {
 	for {
 		message := <-ch
 
-		modifiedMessage, err := ModifyTransaction(message.Value)
+		// Unmarshal message.Value to MapStringInterface for further processing
+		var tx map[string]interface{}
+		err := json.Unmarshal(message.Value, &tx)
 		if err != nil {
-			logger.Log.Error().Err(err).Msg("Error fixing transaction object")
-			return
+			logger.Log.Debug().Err(err).Msg("Transaction json.Unmarshal error")
+			continue
 		}
 
+		// Modify transaction by fixing some transaction fields
+		modifiedTx, err := ModifyTransaction(tx)
+		if err != nil {
+			logger.Log.Debug().Err(err).Msg("Error fixing transaction object")
+			continue
+		}
+
+		// Marshal modified transaction back to JSON
+		txJSON, err := json.Marshal(modifiedTx)
+		if err != nil {
+			logger.Log.Debug().Err(err).Msg("Transaction json.Marshal error")
+			continue
+		}
+
+		li, ok := tx["ledger_index"].(float64)
+		if !ok {
+			logger.Log.Debug().Err(err).Msg("ledger_index not found in transaction")
+			continue
+		}
+		indexName := GetIndexName(models.StreamTransaction.String(), int(li))
+
+		// Add tx to bulk indexing queue
 		err = bulk.Add(
 			context.Background(),
 			esutil.BulkIndexerItem{
 				Action:     "index",
+				Index:      indexName,
 				DocumentID: string(message.Key),
-				Body:       bytes.NewReader(modifiedMessage),
+				Body:       bytes.NewReader(txJSON),
 				OnFailure: func(ctx context.Context, item esutil.BulkIndexerItem, res esutil.BulkIndexerResponseItem, err error) {
 					if err != nil {
 						logger.Log.Trace().Err(err).Msg("Bulk index error")
