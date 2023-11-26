@@ -11,7 +11,7 @@ type Transaction struct {
 	// Common fields - https://xrpl.org/transaction-common-fields.html
 	Account            string   `json:"Account,omitempty"`
 	TransactionType    string   `json:"TransactionType,omitempty"`
-	Fee                string   `json:"Fee,omitempty"`
+	Fee                uint64   `json:"Fee,omitempty"`
 	Sequence           uint32   `json:"Sequence,omitempty"`
 	AccountTxnID       string   `json:"AccountTxnID,omitempty"`
 	PreviousTxnID      string   `json:"PreviousTxnID,omitempty"`
@@ -139,11 +139,12 @@ type Transaction struct {
 	// Payment fields - https://xrpl.org/payment.html#payment-fields
 	Amount         Currency `json:"Amount,omitempty"`
 	Destination    string   `json:"Destination,omitempty"`
-	DestinationTag int      `json:"DestinationTag,omitempty"`
+	DestinationTag uint32   `json:"DestinationTag,omitempty"`
 	InvoiceID      string   `json:"InvoiceID,omitempty"`
 	Paths          []Path   `json:"Paths,omitempty"`
 	SendMax        Currency `json:"SendMax,omitempty"`
 	DeliverMin     Currency `json:"DeliverMin,omitempty"`
+	DeliverMax     Currency `json:"DeliverMax,omitempty"`
 
 	// PaymentChannelClaim fields - https://xrpl.org/paymentchannelclaim.html#paymentchannelclaim-fields
 	// Shared fields:
