@@ -17,7 +17,7 @@ func IndexTemplateLedger(shards uint8, replicas uint8) string {
 			},
 			%[4]s,
 			"aliases": {
-				"%[1]s.ledgers": {}
+				"%[1]s.ledger": {}
 			}
 		},
 		"priority": 128,
