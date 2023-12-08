@@ -17,7 +17,7 @@ type Transaction struct {
 	PreviousTxnID      string   `json:"PreviousTxnID,omitempty"`
 	Flags              uint32   `json:"Flags,omitempty"`
 	LastLedgerSequence uint32   `json:"LastLedgerSequence,omitempty"`
-	Memos              []Memo   `json:"Memos,omitempty"`
+	Memos              []Memos  `json:"Memos,omitempty"`
 	NetworkID          uint32   `json:"NetworkID,omitempty"`
 	Signers            []Signer `json:"Signers,omitempty"`
 	SourceTag          uint32   `json:"SourceTag,omitempty"`
