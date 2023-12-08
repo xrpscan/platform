@@ -3,7 +3,6 @@ package producers
 import (
 	"context"
 	"encoding/json"
-	"log"
 
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/config"
@@ -105,6 +104,6 @@ func ProduceTransaction(w *kafka.Writer, message []byte) {
 		},
 	)
 	if err != nil {
-		log.Printf("Failed to write message: %s", err)
+		logger.Log.Trace().Err(err).Msg("Failed to produce transaction")
 	}
 }

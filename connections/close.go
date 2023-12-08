@@ -92,6 +92,7 @@ func CloseXrplClient() {
 
 func CloseAll() {
 	log.Println("Closing all connections")
+	UnsubscribeStreams()
 	CloseWriter()
 	CloseReaders()
 	CloseEsClient()

@@ -20,8 +20,9 @@ func main() {
 	connections.NewEsClient()
 	connections.NewXrplClient()
 
-	go producers.SubscribeStreams()
-	consumers.RunConsumers()
+	go connections.SubscribeStreams()
+	go producers.RunProducers()
+	go consumers.RunConsumers()
 
 	e := echo.New()
 	e.HideBanner = true
