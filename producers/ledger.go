@@ -3,11 +3,11 @@ package producers
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"strconv"
 
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/config"
+	"github.com/xrpscan/platform/logger"
 	"github.com/xrpscan/xrpl-go"
 )
 
@@ -27,6 +27,6 @@ func ProduceLedger(w *kafka.Writer, message []byte) {
 		},
 	)
 	if err != nil {
-		log.Printf("Failed to write message: %s", err)
+		logger.Log.Trace().Err(err).Msg("Failed to produce ledger")
 	}
 }

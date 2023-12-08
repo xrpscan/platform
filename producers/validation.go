@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/config"
+	"github.com/xrpscan/platform/logger"
 	"github.com/xrpscan/xrpl-go"
 )
 
@@ -27,6 +27,6 @@ func ProduceValidation(w *kafka.Writer, message []byte) {
 		},
 	)
 	if err != nil {
-		log.Printf("Failed to write message: %s", err)
+		logger.Log.Trace().Err(err).Msg("Failed to produce validation")
 	}
 }
