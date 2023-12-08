@@ -1,7 +1,7 @@
 package models
 
 type Memos struct {
-	Memo
+	Memo Memo `json:"Memo,omitempty"`
 }
 
 type Memo struct {

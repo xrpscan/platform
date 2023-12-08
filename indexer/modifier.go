@@ -1,6 +1,9 @@
 package indexer
 
 import (
+	"encoding/hex"
+	"encoding/json"
+
 	"github.com/xrpscan/platform/models"
 	"github.com/xrpscan/xrpl-go"
 )
@@ -34,6 +37,42 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 		ModifyAmount(tx, field.String(), network)
 	}
 
+	// Modify Domain field
+	domainHex, ok := tx["Domain"].(string)
+	if ok {
+		tx["Domain"] = hexDecode(domainHex)
+	}
+
+	// Modify URI field
+	uriHex, ok := tx["URI"].(string)
+	if ok {
+		tx["URI"] = hexDecode(uriHex)
+	}
+
+	/*
+	* Modify Memos field:
+	* - Marshal Memos field to JSON []byte
+	* - Unmarshal it to []models.Memos
+	* - Mutate contents of individual Memo fields
+	* - Marshal it back to map[string]interface{}
+	* - Set the mutated value back to tx object
+	 */
+	if tx["Memos"] != nil {
+		memosJSON, err := json.Marshal(tx["Memos"])
+		if err == nil {
+			var Memos []models.Memos
+			err := json.Unmarshal(memosJSON, &Memos)
+			if err == nil {
+				for i := range Memos {
+					Memos[i].Memo.MemoData = hexDecode(Memos[i].Memo.MemoData)
+					Memos[i].Memo.MemoType = hexDecode(Memos[i].Memo.MemoType)
+					Memos[i].Memo.MemoFormat = hexDecode(Memos[i].Memo.MemoFormat)
+				}
+			}
+			tx["Memos"] = Memos
+		}
+	}
+
 	// Rename tx.metaData property to tx.meta
 	metaDataField := "metaData"
 	_, ok2 := tx[metaDataField]
@@ -62,4 +101,12 @@ func ModifyAmount(tx MapStringInterface, field string, network xrpl.Network) err
 		tx[field] = MapStringInterface{"currency": network.Asset(), "value": value}
 	}
 	return nil
+}
+
+func hexDecode(encoded string) string {
+	decoded, err := hex.DecodeString(encoded)
+	if err != nil {
+		return encoded
+	}
+	return string(decoded)
 }
