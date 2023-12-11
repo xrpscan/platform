@@ -3,9 +3,11 @@ package indexer
 import (
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 
 	"github.com/xrpscan/platform/models"
 	"github.com/xrpscan/xrpl-go"
+	xrplgomodels "github.com/xrpscan/xrpl-go/models"
 )
 
 // Raw transaction object represented as a map-string-interface
@@ -18,6 +20,20 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 	networkId, ok := tx["NetworkID"].(int)
 	if ok {
 		network = xrpl.GetNetwork(networkId)
+	}
+
+	// Rename tx.metaData property to tx.meta
+	metaDataField := "metaData"
+	_, ok2 := tx[metaDataField]
+	if ok2 {
+		tx["meta"] = tx[metaDataField]
+		delete(tx, metaDataField)
+	}
+
+	// Add CTID field to the transaction
+	ctid, err := getCTID(tx["ledger_index"], tx["meta"], network)
+	if err == nil {
+		tx["ctid"] = ctid
 	}
 
 	// Modify Fee from string to uint64
@@ -73,14 +89,6 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 		}
 	}
 
-	// Rename tx.metaData property to tx.meta
-	metaDataField := "metaData"
-	_, ok2 := tx[metaDataField]
-	if ok2 {
-		tx["meta"] = tx[metaDataField]
-		delete(tx, metaDataField)
-	}
-
 	// Modify Amount-like fields in meta
 	meta, ok := tx["meta"].(map[string]interface{})
 	if ok {
@@ -109,4 +117,27 @@ func hexDecode(encoded string) string {
 		return encoded
 	}
 	return string(decoded)
+}
+
+func getCTID(ledgerIndex interface{}, meta interface{}, networkId xrpl.Network) (string, error) {
+	lgrIndex, ok := ledgerIndex.(float64)
+	if !ok {
+		return "", errors.New("cannot assert ledger_index as float64")
+	}
+
+	metaMSI, ok := meta.(map[string]interface{})
+	if !ok {
+		return "", errors.New("cannot parse meta field")
+	}
+	txnIndex, ok := metaMSI["TransactionIndex"].(float64)
+	if !ok {
+		return "", errors.New("cannot assert meta.TransactionIndex as float64")
+	}
+
+	ct := xrplgomodels.CTID{
+		LedgerIndex:      uint64(lgrIndex),
+		TransactionIndex: uint64(txnIndex),
+		NetworkId:        uint64(networkId),
+	}
+	return ct.Encode(), nil
 }

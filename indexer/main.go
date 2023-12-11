@@ -50,7 +50,7 @@ func Index(req esapi.IndexRequest) {
 
 // Create a new Elasticsearch bulk index client
 func NewBulkIndexClient(label string) (esutil.BulkIndexer, error) {
-	flushInterval := 5 * time.Second
+	flushInterval := time.Duration(config.EnvEsFlushInterval()) * time.Second
 	bulk, err := esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
 		Client:        connections.EsClient,
 		NumWorkers:    1,
