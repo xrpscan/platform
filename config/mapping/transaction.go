@@ -61,6 +61,7 @@ func transactionMapping() string {
 			"CheckID": { "type": "keyword" },
 			"ClearFlag": { "type": "long" },
 			"Condition": { "type": "keyword" },
+			"ctid": { "type": "keyword" },
 			"DeliverMax": {
 				"properties": {
 					"currency": { "type": "keyword" },
