@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -82,4 +83,12 @@ func EnvEsPassword() string {
 
 func EnvEsFingerprint() string {
 	return os.Getenv("ELASTICSEARCH_FINGERPRINT")
+}
+
+func EnvEsFlushInterval() int {
+	esFlushInterval, err := strconv.Atoi(os.Getenv("ELASTICSEARCH_FLUSH_INTERVAL"))
+	if err != nil {
+		return 5
+	}
+	return esFlushInterval
 }
