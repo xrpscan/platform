@@ -2,6 +2,7 @@ package models
 
 type Transaction struct {
 	// Transaction response fields - https://xrpl.org/tx.html#response-format
+	CTID        string `json:"ctid,omitempty"`
 	Date        uint32 `json:"date,omitempty"`
 	Hash        string `json:"hash,omitempty"`
 	LedgerIndex uint32 `json:"ledger_index,omitempty"`
