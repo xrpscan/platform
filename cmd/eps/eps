@@ -1,0 +1,19 @@
+#!/bin/sh
+# Elastic PS
+#
+# 1. Copy this script to user accessible bin directory
+# 2. Adjust platform environment file location below
+
+ES_ENV_FILE=.env
+
+source $ES_ENV_FILE
+curl -k -u elastic:$ELASTICSEARCH_PASSWORD -XGET 'https://localhost:9200/_refresh'
+echo
+echo "=== Aliases ==="
+curl -k -u elastic:$ELASTICSEARCH_PASSWORD -XGET 'https://localhost:9200/_cat/aliases?v=true'
+echo
+echo "=== IndexTemplates ==="
+curl -k -u elastic:$ELASTICSEARCH_PASSWORD -XGET 'https://localhost:9200/_cat/templates/platform*?v=true'
+echo
+echo "=== Indices ==="
+curl -k -u elastic:$ELASTICSEARCH_PASSWORD -XGET 'https://localhost:9200/_cat/indices?v=true&s=store.size:asc,index:asc'
