@@ -42,16 +42,26 @@ func ledgerMapping() string {
 			"enabled": true
 		},
 		"properties": {
-			"fee_base":          { "type": "long" },
-			"fee_ref":           { "type": "long" },
-			"ledger_hash":       { "type": "keyword" },
-			"ledger_index":      { "type": "long" },
-			"ledger_time":       { "type": "long" },
-			"reserve_base":      { "type": "long" },
-			"reserve_inc":       { "type": "long" },
-			"txn_count":         { "type": "long" },
-			"type":              { "type": "keyword" },
-			"validated_ledgers": { "type": "keyword" }
+			"account_hash":          { "type": "keyword" },
+			"close_flags":           { "type": "integer" },
+			"close_time":            { "type": "integer" },
+			"close_time_human":      { "type": "keyword" },
+			"close_time_resolution": { "type": "integer" },
+			"closed":                { "type": "boolean" },
+			"fee_base":              { "type": "long" },
+			"fee_ref":               { "type": "long" },
+			"ledger_hash":           { "type": "keyword" },
+			"ledger_index":          { "type": "long" },
+			"ledger_time":           { "type": "long" },
+			"parent_close_time":     { "type": "integer" },
+			"parent_hash":           { "type": "keyword" },
+			"reserve_base":          { "type": "long" },
+			"reserve_inc":           { "type": "long" },
+			"total_coins":           { "type": "long" },
+			"transaction_hash":      { "type": "keyword" },
+			"txn_count":             { "type": "long" },
+			"type":                  { "type": "keyword" },
+			"validated_ledgers":     { "type": "keyword" }
 		}
 	}`
 }

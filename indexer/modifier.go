@@ -4,14 +4,13 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"strconv"
 
+	"github.com/xrpscan/platform/logger"
 	"github.com/xrpscan/platform/models"
 	"github.com/xrpscan/xrpl-go"
 	xrplgomodels "github.com/xrpscan/xrpl-go/models"
 )
-
-// Raw transaction object represented as a map-string-interface
-type MapStringInterface map[string]interface{}
 
 // Modify transacion object to normalize Amount-like and other fields.
 func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error) {
@@ -36,16 +35,13 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 		tx["ctid"] = ctid
 	}
 
-	// Modify Fee from string to uint64
-	fee, ok := tx["Fee"].(uint64)
+	// Modify Fee from string to int64
+	feeStr, ok := tx["Fee"].(string)
 	if ok {
-		tx["Fee"] = fee
-	}
-
-	// Modify DestinationTag from integer to uint32
-	destinationTag, ok := tx["DestinationTag"].(uint32)
-	if ok {
-		tx["DestinationTag"] = destinationTag
+		fee, err := strconv.ParseInt(feeStr, 10, 64)
+		if err == nil {
+			tx["Fee"] = fee
+		}
 	}
 
 	// Modify Amount-like fields listed in models.AmountFields
@@ -103,10 +99,37 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 	return tx, nil
 }
 
-func ModifyAmount(tx MapStringInterface, field string, network xrpl.Network) error {
-	value, ok := tx[field].(string)
+func ModifyAmount(tx map[string]interface{}, field string, network xrpl.Network) error {
+	if tx[field] == nil {
+		return nil
+	}
+
+	iou, ok := tx[field].(map[string]interface{})
 	if ok {
-		tx[field] = MapStringInterface{"currency": network.Asset(), "value": value}
+		// TODO: Handle values expressed in scientific notation
+		// snMatch, _ := regexp.MatchString(`^\d+[eE]\d+$`, iouValueStr)
+
+		iouValueStr, ok := iou["value"].(string)
+		if ok {
+			iouValue, err := strconv.ParseFloat(iouValueStr, 64)
+			if err != nil {
+				logger.Log.Trace().Err(err).Str("field", field).Msg("IOU value error")
+			} else {
+				iou["value"] = iouValue
+				tx[field] = iou
+			}
+		}
+	}
+
+	// If value is native asset, therefore represented as just a string, convert
+	// it to Currency
+	valueStr, ok := tx[field].(string)
+	if ok {
+		value, err := strconv.ParseInt(valueStr, 10, 64)
+		if err == nil {
+			tx[field] = map[string]interface{}{"currency": network.Asset(), "value": value}
+		}
+		tx[field] = map[string]interface{}{"currency": network.Asset(), "value": value}
 	}
 	return nil
 }

@@ -18,15 +18,15 @@ const LEDGER_STREAM_TYPE string = "ledgerClosed"
 // Ledger struct represents output of 'ledger' websocket command
 // Ref: https://xrpl.org/ledger.html#response-format
 type Ledger struct {
+	Hash                string               `json:"hash,omitempty"`
 	LedgerHash          string               `json:"ledger_hash,omitempty"`
-	TotalCoins          string               `json:"totalCoins,omitempty"`
+	CloseTimeHuman      string               `json:"close_time_human,omitempty"`
 	TransactionHash     string               `json:"transaction_hash,omitempty"`
-	Total_Coins         string               `json:"total_coins,omitempty"`
 	AccountHash         string               `json:"account_hash,omitempty"`
 	ParentHash          string               `json:"parent_hash,omitempty"`
-	Hash                string               `json:"hash,omitempty"`
-	CloseTimeHuman      string               `json:"close_time_human,omitempty"`
 	Transactions        []models.Transaction `json:"transactions,omitempty"`
+	Total_Coins         int64                `json:"totalCoins,omitempty"`
+	TotalCoins          int64                `json:"total_coins,omitempty"`
 	CloseFlags          uint32               `json:"close_flags,omitempty"`
 	ParentCloseTime     uint32               `json:"parent_close_time,omitempty"`
 	CloseTimeResolution uint32               `json:"close_time_resolution,omitempty"`

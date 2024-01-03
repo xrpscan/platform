@@ -3,6 +3,7 @@ package producers
 import (
 	"context"
 	"encoding/json"
+	"strconv"
 
 	"github.com/segmentio/kafka-go"
 	"github.com/xrpscan/platform/config"
@@ -12,6 +13,8 @@ import (
 )
 
 /*
+* Produce multiple transactions from a given ledger_index.
+*
 * Verifies structure of `ledger` websocket command, iterates over `transactions`
 * slice, and calls ProduceTransaction for each transaction object.
 *
@@ -19,20 +22,11 @@ import (
 * transactions returned via `tx` and `account_tx` commands.
  */
 func ProduceTransactions(w *kafka.Writer, message []byte) {
-	// var res xrpl.BaseResponse
-	// if err := json.Unmarshal(message, &res); err != nil {
-	// 	logger.Log.Error().Err(err).Msg("JSON Unmarshal error")
-	// 	return
-	// }
-	// ledgerIndex := strconv.Itoa(int(res["ledger_index"].(float64)))
-
 	var ledger models.LedgerStream
 	if err := json.Unmarshal(message, &ledger); err != nil {
 		logger.Log.Error().Err(err).Msg("JSON Unmarshal error")
 		return
 	}
-
-	// Type check ledger object in message and call Ledger.FetchTransactions on it
 
 	// Fetch all transactions included in this ledger from XRPL server
 	txResponse, err := ledger.FetchTransactions()
@@ -58,6 +52,23 @@ func ProduceTransactions(w *kafka.Writer, message []byte) {
 		return
 	}
 
+	// Type assert ledger_index and date fields
+	ledgerIndexStr, ok := txLedger["ledger_index"].(string)
+	if !ok {
+		logger.Log.Error().Uint32("ledger_index", ledger.LedgerIndex).Msg("Ledger has invalid ledger_index property")
+		return
+	}
+	ledgerIndex, err := strconv.Atoi(ledgerIndexStr)
+	if err != nil {
+		logger.Log.Error().Uint32("ledger_index", ledger.LedgerIndex).Msg("Cannot convert ledger_index to int")
+		return
+	}
+	closeTime, ok := txLedger["close_time"].(float64)
+	if !ok {
+		logger.Log.Error().Uint32("ledger_index", ledger.LedgerIndex).Msg("Ledger has invalid close_time property")
+		return
+	}
+
 	// Iterate over transactions slice and submit each transaction to Kafka topic
 	for _, txo := range txs {
 		tx, ok := txo.(map[string]interface{})
@@ -68,8 +79,8 @@ func ProduceTransactions(w *kafka.Writer, message []byte) {
 
 		// Transactions fetched by `ledger` command do not have date, validated and
 		// ledger_index fields. Populating these tx fields from ledger data.
-		tx["ledger_index"] = ledger.LedgerIndex
-		tx["date"] = ledger.LedgerTime
+		tx["ledger_index"] = ledgerIndex
+		tx["date"] = closeTime
 		tx["validated"] = true
 
 		txJSON, err := json.Marshal(tx)
