@@ -22,7 +22,7 @@ import (
 )
 
 const InitCommandName = "init"
-const defaultShards int = 16
+const defaultShards int = 1
 const defaultReplicas int = 0
 
 type InitCommand struct {
