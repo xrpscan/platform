@@ -47,6 +47,48 @@ type Transaction struct {
 	WalletLocator string `json:"WalletLocator,omitempty"`
 	WalletSize    uint32 `json:"WalletSize,omitempty"`
 
+	// AMMBid fields - https://xrpl.org/docs/references/protocol/transactions/types/ammbid/
+	Asset        Currency       `json:"Asset,omitempty"`
+	Asset2       Currency       `json:"Asset2,omitempty"`
+	BidMin       Currency       `json:"BidMin,omitempty"`
+	BidMax       Currency       `json:"BidMax,omitempty"`
+	AuthAccounts []AuthAccounts `json:"AuthAccounts,omitempty"`
+
+	// AMMCreate fields - https://xrpl.org/docs/references/protocol/transactions/types/ammcreate/
+	// Shared fields:
+	// Amount Currency
+	Amount2    Currency `json:"Amount2,omitempty"`
+	TradingFee uint16   `json:"TradingFee,omitempty"`
+
+	// AMMDelete fields - https://xrpl.org/docs/references/protocol/transactions/types/ammdelete/
+	// Shared fields:
+	// Asset Currency
+	// Asset2 Currency
+
+	// AMMDeposit fields - https://xrpl.org/docs/references/protocol/transactions/types/ammdeposit/
+	// Shared fields
+	// Asset      Currency
+	// Asset2     Currency
+	// Amount     Currency
+	// Amount2    Currency
+	EPrice     Currency `json:"EPrice,omitempty"`
+	LPTokenOut Currency `json:"LPTokenOut,omitempty"`
+
+	// AMMVote fields - https://xrpl.org/docs/references/protocol/transactions/types/ammvote/
+	// Shared fields
+	// Asset      Currency
+	// Asset2     Currency
+	// TradingFee uint16
+
+	// AMMWithdraw fields - https://xrpl.org/docs/references/protocol/transactions/types/ammwithdraw/
+	// Shared fields
+	// Asset     Currency
+	// Asset2    Currency
+	// Amount    Currency
+	// Amount2   Currency
+	// EPrice    Currency
+	LPTokenIn Currency `json:"LPTokenIn,omitempty"`
+
 	// CheckCancel fields - https://xrpl.org/checkcancel.html#checkcancel-fields
 	// Shared fields:
 	// CheckID string
@@ -72,6 +114,15 @@ type Transaction struct {
 	// DepositPreauth fields - https://xrpl.org/depositpreauth.html#depositpreauth-fields
 	Authorize   string `json:"Authorize,omitempty"`
 	Unauthorize string `json:"Unauthorize,omitempty"`
+
+	// DIDDelete fields - https://xrpl.org/docs/references/protocol/transactions/types/diddelete/
+	// Account string
+
+	// DIDSet fields - https://xrpl.org/docs/references/protocol/transactions/types/didset/
+	// Shared fields
+	// URI         string
+	Data        string `json:"Data,omitempty"`
+	DIDDocument string `json:"DIDDocument,omitempty"`
 
 	// EnableAmendment fields - https://xrpl.org/enableamendment.html#enableamendment-fields
 	// Shared fields:
@@ -204,6 +255,16 @@ type Transaction struct {
 
 	// Xahau Burn2Mint fields
 	OperationLimit string `json:"OperationLimit,omitempty"`
+
+	// TODO: Add fields here before XChainBridge amendment activates
+	// XChainAccountCreateCommit fields - https://xrpl.org/docs/references/protocol/transactions/types/xchainaccountcreatecommit/
+	// XChainAddAccountCreateAttestation fields - https://xrpl.org/docs/references/protocol/transactions/types/xchainaddaccountcreateattestation/
+	// XChainAddClaimAttestation fields - https://xrpl.org/docs/references/protocol/transactions/types/xchainaddclaimattestation/
+	// XChainClaim fields - https://xrpl.org/docs/references/protocol/transactions/types/xchainclaim/
+	// XChainCommit fields - https://xrpl.org/docs/references/protocol/transactions/types/xchaincommit/
+	// XChainCreateBridge fields - https://xrpl.org/docs/references/protocol/transactions/types/xchaincreatebridge/
+	// XChainCreateClaimID fields - https://xrpl.org/docs/references/protocol/transactions/types/xchaincreateclaimid/
+	// XChainModifyBridge fields - https://xrpl.org/docs/references/protocol/transactions/types/xchainmodifybridge/
 
 	// Shared fields
 	Owner          string `json:"Owner,omitempty"`
