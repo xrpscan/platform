@@ -31,6 +31,7 @@ type InitCommand struct {
 	fShards        int
 	fReplicas      int
 	fElasticsearch bool
+	fForce         bool
 	fVerbose       bool
 }
 
@@ -43,6 +44,7 @@ func NewInitCommand() *InitCommand {
 	cmd.fs.IntVar(&cmd.fShards, "shards", defaultShards, "Number of shards")
 	cmd.fs.IntVar(&cmd.fReplicas, "replicas", defaultReplicas, "Number of replicas")
 	cmd.fs.StringVar(&cmd.fConfigFile, "config", ".env", "Environment config file")
+	cmd.fs.BoolVar(&cmd.fForce, "force", false, "Force command by ignoring checks")
 	cmd.fs.BoolVar(&cmd.fVerbose, "verbose", false, "Make the command more talkative")
 	return cmd
 }
@@ -92,9 +94,10 @@ func (cmd *InitCommand) Run() error {
 
 	for template, mapper := range supportedTemplates {
 		templateWithNamespace := fmt.Sprintf("%s.%s", config.EnvEsNamespace(), template)
-		if cmd.ExistsIndexTemplate(templateWithNamespace) {
+		if cmd.ExistsIndexTemplate(templateWithNamespace) && !cmd.fForce {
 			fmt.Printf("IndexTemplate exists: %s\n", templateWithNamespace)
 		} else {
+			fmt.Printf("Updating IndexTemplate: %s\n", templateWithNamespace)
 			err := cmd.PutIndexTemplate(templateWithNamespace, mapper(uint8(cmd.fShards), uint8(cmd.fReplicas)))
 			if err != nil {
 				fmt.Println(err)
