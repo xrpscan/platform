@@ -23,6 +23,14 @@ const (
 	TakerPays
 	Currency_
 	NFTokenBrokerFee
+	Amount2
+	Asset
+	Asset2
+	BidMin
+	BidMax
+	EPrice
+	LPTokenIn
+	LPTokenOut
 )
 
 // Converts AmountField to its string representation
@@ -50,6 +58,22 @@ func (af AmountField) String() string {
 		return "currency"
 	case NFTokenBrokerFee:
 		return "NFTokenBrokerFee"
+	case Amount2:
+		return "Amount2"
+	case Asset:
+		return "Asset"
+	case Asset2:
+		return "Asset2"
+	case BidMin:
+		return "BidMin"
+	case BidMax:
+		return "BidMax"
+	case EPrice:
+		return "EPrice"
+	case LPTokenIn:
+		return "LPTokenIn"
+	case LPTokenOut:
+		return "LPTokenOut"
 	}
 	return ""
 }
@@ -67,4 +91,12 @@ var AmountFields = []AmountField{
 	TakerPays,
 	Currency_,
 	NFTokenBrokerFee,
+	Amount2,
+	Asset,
+	Asset2,
+	BidMin,
+	BidMax,
+	EPrice,
+	LPTokenIn,
+	LPTokenOut,
 }

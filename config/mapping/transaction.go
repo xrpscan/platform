@@ -50,18 +50,67 @@ func transactionMapping() string {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "long" },
+					"native": { "type": "boolean" }
+				}
+			},
+			"Amount2": {
+				"properties": {
+					"currency": { "type": "keyword" },
+					"issuer": { "type": "keyword" },
+					"value":  { "type": "long" },
 					"native": { "type": "boolean"}
-
+				}
+			},
+			"Asset": {
+				"properties": {
+					"currency": { "type": "keyword" },
+					"issuer": { "type": "keyword" },
+					"value":  { "type": "long" },
+					"native": { "type": "boolean"}
+				}
+			},
+			"Asset2": {
+				"properties": {
+					"currency": { "type": "keyword" },
+					"issuer": { "type": "keyword" },
+					"value":  { "type": "long" },
+					"native": { "type": "boolean"}
+				}
+			},
+			"AuthAccounts": {
+				"properties": {
+					"AuthAccount": {
+						"properties": {
+							"Account": { "type": "keyword" }
+						}
+					}
 				}
 			},
 			"Authorize": { "type": "keyword" },
 			"Balance": { "type": "keyword" },
+			"BidMin": {
+				"properties": {
+					"currency": { "type": "keyword" },
+					"issuer": { "type": "keyword" },
+					"value":  { "type": "long" },
+					"native": { "type": "boolean"}
+				}
+			},
+			"BidMax": {
+				"properties": {
+					"currency": { "type": "keyword" },
+					"issuer": { "type": "keyword" },
+					"value":  { "type": "long" },
+					"native": { "type": "boolean"}
+				}
+			},
 			"CancelAfter": { "type": "long" },
 			"Channel": { "type": "keyword" },
 			"CheckID": { "type": "keyword" },
 			"ClearFlag": { "type": "long" },
 			"Condition": { "type": "keyword" },
 			"ctid": { "type": "keyword" },
+			"Data": { "type": "keyword" },
 			"DeliverMax": {
 				"properties": {
 					"currency": { "type": "keyword" },
@@ -80,8 +129,17 @@ func transactionMapping() string {
 			},
 			"Destination": { "type": "keyword" },
 			"DestinationTag": { "type": "long" },
+			"DIDDocument": { "type": "keyword" },
 			"Domain": { "type": "keyword" },
 			"EmailHash": { "type": "keyword" },
+			"EPrice": {
+				"properties": {
+					"currency": { "type": "keyword" },
+					"issuer": { "type": "keyword" },
+					"value":  { "type": "long" },
+					"native": { "type": "boolean"}
+				}
+			},
 			"Expiration": { "type": "long" },
 			"Fee": { "type": "long" },
 			"FinishAfter": { "type": "long" },
@@ -92,6 +150,22 @@ func transactionMapping() string {
 			"LastLedgerSequence": { "type": "long" },
 			"LedgerSequence": { "type": "long" },
 			"LimitAmount": {
+				"properties": {
+					"currency": { "type": "keyword" },
+					"issuer": { "type": "keyword" },
+					"value":  { "type": "long" },
+					"native": { "type": "boolean"}
+				}
+			},
+			"LPTokenIn": {
+				"properties": {
+					"currency": { "type": "keyword" },
+					"issuer": { "type": "keyword" },
+					"value":  { "type": "long" },
+					"native": { "type": "boolean"}
+				}
+			},
+			"LPTokenOut": {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
@@ -197,6 +271,7 @@ func transactionMapping() string {
 			"TicketCount": { "type": "long" },
 			"TicketSequence": { "type": "long" },
 			"TransactionType": { "type": "keyword" },
+			"TradingFee": { "type": "integer" },
 			"TransferFee": { "type": "long" },
 			"TransferRate": { "type": "long" },
 			"TxnSignature": { "type": "keyword" },
