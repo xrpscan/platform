@@ -128,8 +128,23 @@ curl -k -u elastic:$ELASTICSEARCH_PASSWORD \
 jq .hits
 ```
 
+### Maintenance
+Over time, XRPL protocol may receive updates via the [amendment](https://xrpscan.com/amendments) process. New amendments may add additional fields to the transaction, ledger or validation objects. When this happens, Elasticsearch index templates would need an update.
+
+```
+./bin/platform-cli init -elasticsearch -force
+```
+
 ### References
 [Ledger Stream - xrpl.org](https://xrpl.org/subscribe.html#ledger-stream)
+
+### Developer notes
+#### Updating Models
+When a new amendment adds or removes fields from transaction object, review the following files and update as necessary:
+
+* `models/transaction.go`
+* `config/mapping/transaction.go`
+* `models/currency.go` (for Currency fields)
 
 ### Known issues
 
