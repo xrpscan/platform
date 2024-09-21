@@ -49,7 +49,9 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean" }
 				}
 			},
@@ -57,7 +59,9 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -65,7 +69,9 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -73,10 +79,13 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
+			"AssetClass":  { "type": "keyword" },
 			"AuthAccounts": {
 				"properties": {
 					"AuthAccount": {
@@ -92,7 +101,9 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -100,11 +111,14 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
 			"CancelAfter": { "type": "long" },
+			"_CancelAfter": { "type": "date" },
 			"Channel": { "type": "keyword" },
 			"CheckID": { "type": "keyword" },
 			"ClearFlag": { "type": "long" },
@@ -115,7 +129,9 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -123,7 +139,9 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -136,24 +154,32 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
 			"Expiration": { "type": "long" },
+			"_Expiration": { "type": "date" },
 			"Fee": { "type": "long" },
 			"FinishAfter": { "type": "long" },
+			"_FinishAfter": { "type": "date" },
 			"Flags": { "type": "long" },
 			"Fulfillment": { "type": "keyword" },
 			"InvoiceID": { "type": "keyword" },
 			"Issuer": { "type": "keyword" },
 			"LastLedgerSequence": { "type": "long" },
+			"LastUpdateTime": { "type": "long" },
+			"_LastUpdateTime": { "type": "date" },
 			"LedgerSequence": { "type": "long" },
 			"LimitAmount": {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -161,7 +187,9 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -169,7 +197,9 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -189,7 +219,9 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -201,6 +233,7 @@ func transactionMapping() string {
 			"NFTokenTaxon": { "type": "long" },
 			"OfferSequence": { "type": "long" },
 			"OperationLimit": { "type": "long" },
+			"OracleDocumentID": { "type": "long" },
 			"Owner": { "type": "keyword" },
 			"Paths": {
 				"properties": {
@@ -210,6 +243,19 @@ func transactionMapping() string {
 					"type": { "type": "long" }
 				}
 			},
+			"PriceDataSeries": {
+				"properties": {
+					"PriceData": {
+						"properties": {
+							"BaseAsset": { "type": "keyword" },
+							"QuoteAsset": { "type": "keyword" },
+							"AssetPrice": { "type": "long" },
+							"Scale": { "type": "short" }
+						}
+					}
+				}
+			},
+			"Provider": { "type": "keyword" },
 			"PublicKey": { "type": "keyword" },
 			"QualityIn": { "type": "long" },
 			"QualityOut": { "type": "long" },
@@ -218,7 +264,9 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -255,7 +303,9 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -263,7 +313,9 @@ func transactionMapping() string {
 				"properties": {
 					"currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long" },
+					"value":  { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "long", "ignore_malformed": true },
+					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -280,6 +332,7 @@ func transactionMapping() string {
 			"URI": { "type": "keyword" },
 			"Unauthorize": { "type": "keyword" },
 			"date": { "type": "long" },
+			"_date": { "type": "date" },
 			"hash": { "type": "keyword" },
 			"ledger_index": { "type": "long" },
 			"meta": {
@@ -288,7 +341,9 @@ func transactionMapping() string {
 						"properties": {
 							"currency": { "type": "keyword" },
 							"issuer": { "type": "keyword" },
-							"value":  { "type": "long" },
+							"value":  { "type": "long", "ignore_malformed": true },
+							"_value": { "type": "long", "ignore_malformed": true },
+							"_valuestr": { "type": "keyword" },
 							"native": { "type": "boolean"}		
 						}
 					},
@@ -298,7 +353,9 @@ func transactionMapping() string {
 						"properties": {
 							"currency": { "type": "keyword" },
 							"issuer": { "type": "keyword" },
-							"value":  { "type": "long" },
+							"value":  { "type": "long", "ignore_malformed": true },
+							"_value": { "type": "long", "ignore_malformed": true },
+							"_valuestr": { "type": "keyword" },
 							"native": { "type": "boolean"}		
 						}
 					}

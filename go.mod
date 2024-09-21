@@ -11,7 +11,7 @@ require (
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/rs/zerolog v1.33.0
 	github.com/segmentio/kafka-go v0.4.47
-	github.com/xrpscan/xrpl-go v0.2.4
+	github.com/xrpscan/xrpl-go v0.2.6
 )
 
 require (

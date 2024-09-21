@@ -188,6 +188,21 @@ type Transaction struct {
 	TakerGets Currency `json:"TakerGets,omitempty"`
 	TakerPays Currency `json:"TakerPays,omitempty"`
 
+	// OracleDelete fields - https://xrpl.org/docs/references/protocol/transactions/types/oracledelete
+	// Shared fields:
+	// Account string
+	OracleDocumentID uint32 `json:"OracleDocumentID,omitempty"`
+
+	// OracleSet fields - https://xrpl.org/docs/references/protocol/transactions/types/oracleset
+	// Shared fields:
+	// Account          string
+	// OracleDocumentID uint32
+	// URI              string
+	Provider        string      `json:"Provider,omitempty"`
+	LastUpdateTime  uint32      `json:"LastUpdateTime,omitempty"`
+	AssetClass      string      `json:"AssetClass,omitempty"`
+	PriceDataSeries []PriceData `json:"PriceDataSeries,omitempty"`
+
 	// Payment fields - https://xrpl.org/payment.html#payment-fields
 	Amount         Currency `json:"Amount,omitempty"`
 	Destination    string   `json:"Destination,omitempty"`

@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/xrpscan/platform/logger"
@@ -29,10 +30,13 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 		delete(tx, metaDataField)
 	}
 
-	// Add CTID field to the transaction
-	ctid, err := getCTID(tx["ledger_index"], tx["meta"], network)
-	if err == nil {
-		tx["ctid"] = ctid
+	// Add CTID field to the transaction if its missing
+	_, hasCtid := tx["ctid"].(string)
+	if !hasCtid {
+		ctid, err := getCTID(tx["ledger_index"], tx["meta"], network)
+		if err == nil {
+			tx["ctid"] = ctid
+		}
 	}
 
 	// Modify Fee from string to int64
@@ -46,19 +50,17 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 
 	// Modify Amount-like fields listed in models.AmountFields
 	for _, field := range models.AmountFields {
-		ModifyAmount(tx, field.String(), network)
+		modifyAmount(tx, field.String(), network)
 	}
 
-	// Modify Domain field
-	domainHex, ok := tx["Domain"].(string)
-	if ok {
-		tx["Domain"] = hexDecode(domainHex)
+	// Modify contents of fields with Hex data
+	for _, field := range models.HexFields {
+		modifyHex(tx, field.String())
 	}
 
-	// Modify URI field
-	uriHex, ok := tx["URI"].(string)
-	if ok {
-		tx["URI"] = hexDecode(uriHex)
+	// Modify contents of fields with Dates
+	for _, field := range models.DateFields {
+		modifyDate(tx, field.String())
 	}
 
 	/*
@@ -91,15 +93,15 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 		// For simplicity, AffectedNodes field is dropped. This field may indexed
 		// in a future release after due consideration.
 		delete(meta, "AffectedNodes")
-		ModifyAmount(meta, models.DeliveredAmount.String(), network)
-		ModifyAmount(meta, models.Delivered_Amount.String(), network)
+		modifyAmount(meta, models.DeliveredAmount.String(), network)
+		modifyAmount(meta, models.Delivered_Amount.String(), network)
 		tx["meta"] = meta
 	}
 
 	return tx, nil
 }
 
-func ModifyAmount(tx map[string]interface{}, field string, network xrpl.Network) error {
+func modifyAmount(tx map[string]interface{}, field string, network xrpl.Network) error {
 	if tx[field] == nil {
 		return nil
 	}
@@ -134,12 +136,32 @@ func ModifyAmount(tx map[string]interface{}, field string, network xrpl.Network)
 	return nil
 }
 
+func modifyHex(tx map[string]interface{}, field string) error {
+	hex, ok := tx[field].(string)
+	if ok {
+		tx[field] = hexDecode(hex)
+		fmt.Println("CTID:", tx["ctid"], "HEX:", hex, "==> ASCII:", tx[field])
+	}
+	return nil
+}
+
 func hexDecode(encoded string) string {
 	decoded, err := hex.DecodeString(encoded)
 	if err != nil {
 		return encoded
 	}
 	return string(decoded)
+}
+
+func modifyDate(tx map[string]interface{}, field string) error {
+	rippleTimestamp, ok := tx[field].(float64)
+	if ok {
+		newField := fmt.Sprintf("_%s", field)
+		newTime := xrpl.RippleTimeToISOTime(int64(rippleTimestamp))
+		// fmt.Println("TX:", tx["hash"], "Date:", newTime)
+		tx[newField] = newTime
+	}
+	return nil
 }
 
 func getCTID(ledgerIndex interface{}, meta interface{}, networkId xrpl.Network) (string, error) {
