@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/xrpscan/platform/logger"
 	"github.com/xrpscan/platform/models"
@@ -45,6 +46,7 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 		fee, err := strconv.ParseInt(feeStr, 10, 64)
 		if err == nil {
 			tx["Fee"] = fee
+			tx["_Fee"] = float64(fee) / models.DROPS_IN_XRP // Drops to XRP units
 		}
 	}
 
@@ -101,37 +103,64 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 	return tx, nil
 }
 
+// Field legend
+//
+// value: Original value of the value field in string
+//
+// _value: Normalized value of the field in float64. XRP values are converted
+// from Drops to XRP units. IOU value fields are not changed.
+//
+// currency: Original value of the currency field in ISO-4217 string or 160-bit HEX
+//
+// _currency: ISO-4217 currency code or HEX decoded currency code
 func modifyAmount(tx map[string]interface{}, field string, network xrpl.Network) error {
 	if tx[field] == nil {
 		return nil
 	}
 
+	// If value is an IOU with currency, issuer and value fields
 	iou, ok := tx[field].(map[string]interface{})
 	if ok {
 		// TODO: Handle values expressed in scientific notation
 		// snMatch, _ := regexp.MatchString(`^\d+[eE]\d+$`, iouValueStr)
 
+		// Modify IOU's value fields
 		iouValueStr, ok := iou["value"].(string)
 		if ok {
 			iouValue, err := strconv.ParseFloat(iouValueStr, 64)
 			if err != nil {
 				logger.Log.Trace().Err(err).Str("field", field).Msg("IOU value error")
 			} else {
-				iou["value"] = iouValue
-				tx[field] = iou
+				iou["_value"] = iouValue
 			}
 		}
+
+		// Modify IOU's currency field
+		currency, okc := iou["currency"].(string)
+		if okc {
+			iou["_currency"] = getCurrencyCode(currency)
+		}
+
+		// Finally, set the iou field back
+		tx[field] = iou
 	}
 
-	// If value is native asset, therefore represented as just a string, convert
-	// it to Currency
+	// If value is native asset, represented as a string value, convert it to
+	// Currency object with currency and value fields. Issuer field is not set.
 	valueStr, ok := tx[field].(string)
 	if ok {
 		value, err := strconv.ParseInt(valueStr, 10, 64)
 		if err == nil {
-			tx[field] = map[string]interface{}{"currency": network.Asset(), "value": value}
+			tx[field] = map[string]interface{}{
+				"value":     valueStr,
+				"_value":    float64(value) / models.DROPS_IN_XRP,
+				"currency":  network.Asset(),
+				"_currency": network.Asset(),
+				"native":    true,
+			}
+		} else {
+			logger.Log.Trace().Err(err).Str("field", field).Msg("IOU value error")
 		}
-		tx[field] = map[string]interface{}{"currency": network.Asset(), "value": value}
 	}
 	return nil
 }
@@ -140,17 +169,25 @@ func modifyHex(tx map[string]interface{}, field string) error {
 	hex, ok := tx[field].(string)
 	if ok {
 		tx[field] = hexDecode(hex)
-		fmt.Println("CTID:", tx["ctid"], "HEX:", hex, "==> ASCII:", tx[field])
 	}
 	return nil
 }
 
 func hexDecode(encoded string) string {
+	nullChar, _ := hex.DecodeString("00")
 	decoded, err := hex.DecodeString(encoded)
 	if err != nil {
 		return encoded
 	}
-	return string(decoded)
+	return strings.TrimRight(string(decoded), string(nullChar))
+}
+
+// Returns human readable currency code for XRP, 3-letter and HEX encoded currency codes
+func getCurrencyCode(currency string) string {
+	if len(currency) == 40 {
+		return hexDecode(currency)
+	}
+	return currency
 }
 
 func modifyDate(tx map[string]interface{}, field string) error {
@@ -158,7 +195,6 @@ func modifyDate(tx map[string]interface{}, field string) error {
 	if ok {
 		newField := fmt.Sprintf("_%s", field)
 		newTime := xrpl.RippleTimeToISOTime(int64(rippleTimestamp))
-		// fmt.Println("TX:", tx["hash"], "Date:", newTime)
 		tx[newField] = newTime
 	}
 	return nil

@@ -48,40 +48,40 @@ func transactionMapping() string {
 			"Amount": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean" }
 				}
 			},
 			"Amount2": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
 			"Asset": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
 			"Asset2": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -100,20 +100,20 @@ func transactionMapping() string {
 			"BidMin": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
 			"BidMax": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -128,20 +128,20 @@ func transactionMapping() string {
 			"DeliverMax": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
 			"DeliverMin": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -153,16 +153,17 @@ func transactionMapping() string {
 			"EPrice": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
 			"Expiration": { "type": "long" },
 			"_Expiration": { "type": "date" },
 			"Fee": { "type": "long" },
+			"_Fee": { "type": "double" },
 			"FinishAfter": { "type": "long" },
 			"_FinishAfter": { "type": "date" },
 			"Flags": { "type": "long" },
@@ -176,30 +177,30 @@ func transactionMapping() string {
 			"LimitAmount": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
 			"LPTokenIn": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
 			"LPTokenOut": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -218,10 +219,10 @@ func transactionMapping() string {
 			"NFTokenBrokerFee": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -263,10 +264,10 @@ func transactionMapping() string {
 			"SendMax": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -302,20 +303,20 @@ func transactionMapping() string {
 			"TakerGets": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
 			"TakerPays": {
 				"properties": {
 					"currency": { "type": "keyword" },
+					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
-					"value":  { "type": "long", "ignore_malformed": true },
+					"value":  { "type": "keyword" },
 					"_value": { "type": "long", "ignore_malformed": true },
-					"_valuestr": { "type": "keyword" },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -334,17 +335,18 @@ func transactionMapping() string {
 			"date": { "type": "long" },
 			"_date": { "type": "date" },
 			"hash": { "type": "keyword" },
+			"inLedger": { "type": "long" },
 			"ledger_index": { "type": "long" },
 			"meta": {
 				"properties": {
 					"DeliveredAmount": {
 						"properties": {
 							"currency": { "type": "keyword" },
+							"_currency": { "type": "keyword" },
 							"issuer": { "type": "keyword" },
-							"value":  { "type": "long", "ignore_malformed": true },
+							"value":  { "type": "keyword" },
 							"_value": { "type": "long", "ignore_malformed": true },
-							"_valuestr": { "type": "keyword" },
-							"native": { "type": "boolean"}		
+							"native": { "type": "boolean"}
 						}
 					},
 					"TransactionIndex": { "type": "integer" },
@@ -352,11 +354,11 @@ func transactionMapping() string {
 					"delivered_amount": {
 						"properties": {
 							"currency": { "type": "keyword" },
+							"_currency": { "type": "keyword" },
 							"issuer": { "type": "keyword" },
-							"value":  { "type": "long", "ignore_malformed": true },
+							"value":  { "type": "keyword" },
 							"_value": { "type": "long", "ignore_malformed": true },
-							"_valuestr": { "type": "keyword" },
-							"native": { "type": "boolean"}		
+							"native": { "type": "boolean"}
 						}
 					}
 				}

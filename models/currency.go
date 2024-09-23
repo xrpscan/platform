@@ -1,6 +1,7 @@
 package models
 
 const XRP = "XRP"
+const DROPS_IN_XRP = 1000000
 
 type Currency struct {
 	Currency string `json:"currency,omitempty"`
