@@ -50,21 +50,6 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 		}
 	}
 
-	// Modify Amount-like fields listed in models.AmountFields
-	for _, field := range models.AmountFields {
-		modifyAmount(tx, field.String(), network)
-	}
-
-	// Modify contents of fields with Hex data
-	for _, field := range models.HexFields {
-		modifyHex(tx, field.String())
-	}
-
-	// Modify contents of fields with Dates
-	for _, field := range models.DateFields {
-		modifyDate(tx, field.String())
-	}
-
 	/*
 	* Modify Memos field:
 	* - Marshal Memos field to JSON []byte
@@ -98,6 +83,21 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 		modifyAmount(meta, models.DeliveredAmount.String(), network)
 		modifyAmount(meta, models.Delivered_Amount.String(), network)
 		tx["meta"] = meta
+	}
+
+	// Modify Amount-like fields listed in models.AmountFields
+	for _, field := range models.AmountFields {
+		modifyAmount(tx, field.String(), network)
+	}
+
+	// Modify contents of fields with Hex data
+	for _, field := range models.HexFields {
+		modifyHex(tx, field.String())
+	}
+
+	// Modify contents of fields with Dates
+	for _, field := range models.DateFields {
+		modifyDate(tx, field.String())
 	}
 
 	return tx, nil

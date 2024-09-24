@@ -78,7 +78,7 @@ func BulkIndexTransaction(ch <-chan kafka.Message) {
 				Body:       bytes.NewReader(txJSON),
 				OnFailure: func(ctx context.Context, item esutil.BulkIndexerItem, res esutil.BulkIndexerResponseItem, err error) {
 					if err != nil {
-						logger.Log.Error().Err(err).Msg("Bulk index error")
+						logger.Log.Error().Err(err).Str("hash", item.DocumentID).Msg("Bulk index error")
 					} else {
 						logger.Log.Error().Err(err).Str("hash", item.DocumentID).Str("type", res.Error.Type).Str("reason", res.Error.Reason).Msg("Bulk index error")
 					}
