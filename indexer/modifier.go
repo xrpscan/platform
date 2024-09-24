@@ -32,11 +32,12 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 	}
 
 	// Add CTID field to the transaction if its missing
-	_, hasCtid := tx["ctid"].(string)
+	ctid, hasCtid := tx["ctid"].(string)
 	if !hasCtid {
-		ctid, err := getCTID(tx["ledger_index"], tx["meta"], network)
+		newCtid, err := getCTID(tx["ledger_index"], tx["meta"], network)
 		if err == nil {
-			tx["ctid"] = ctid
+			tx["ctid"] = newCtid
+			ctid = newCtid
 		}
 	}
 
@@ -80,14 +81,14 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 		// For simplicity, AffectedNodes field is dropped. This field may indexed
 		// in a future release after due consideration.
 		delete(meta, "AffectedNodes")
-		modifyAmount(meta, models.DeliveredAmount.String(), network)
-		modifyAmount(meta, models.Delivered_Amount.String(), network)
+		modifyAmount(meta, models.DeliveredAmount.String(), ctid, network)
+		modifyAmount(meta, models.Delivered_Amount.String(), ctid, network)
 		tx["meta"] = meta
 	}
 
 	// Modify Amount-like fields listed in models.AmountFields
 	for _, field := range models.AmountFields {
-		modifyAmount(tx, field.String(), network)
+		modifyAmount(tx, field.String(), ctid, network)
 	}
 
 	// Modify contents of fields with Hex data
@@ -113,7 +114,7 @@ func ModifyTransaction(tx map[string]interface{}) (map[string]interface{}, error
 // currency: Original value of the currency field in ISO-4217 string or 160-bit HEX
 //
 // _currency: ISO-4217 currency code or HEX decoded currency code
-func modifyAmount(tx map[string]interface{}, field string, network xrpl.Network) error {
+func modifyAmount(tx map[string]interface{}, field string, ctid string, network xrpl.Network) error {
 	if tx[field] == nil {
 		return nil
 	}
@@ -129,7 +130,7 @@ func modifyAmount(tx map[string]interface{}, field string, network xrpl.Network)
 		if ok {
 			iouValue, err := strconv.ParseFloat(iouValueStr, 64)
 			if err != nil {
-				logger.Log.Debug().Err(err).Str("field", field).Msg("IOU value error")
+				logger.Log.Debug().Err(err).Str("field", field).Str("ctid", ctid).Msg("IOU value error")
 			} else {
 				iou["_value"] = iouValue
 			}
@@ -165,7 +166,7 @@ func modifyAmount(tx map[string]interface{}, field string, network xrpl.Network)
 				"_currency": network.Asset(),
 				"native":    true,
 			}
-			logger.Log.Error().Err(err).Str("field", field).Str("value", valueStr).Msg("Native value error")
+			logger.Log.Error().Err(err).Str("field", field).Str("value", valueStr).Str("ctid", ctid).Msg("Native value error")
 		}
 	}
 	return nil
