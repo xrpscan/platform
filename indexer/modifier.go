@@ -159,7 +159,13 @@ func modifyAmount(tx map[string]interface{}, field string, network xrpl.Network)
 				"native":    true,
 			}
 		} else {
-			logger.Log.Trace().Err(err).Str("field", field).Msg("IOU value error")
+			tx[field] = map[string]interface{}{
+				"value":     valueStr,
+				"currency":  network.Asset(),
+				"_currency": network.Asset(),
+				"native":    true,
+			}
+			logger.Log.Error().Err(err).Str("field", field).Str("value", valueStr).Msg("Native value error")
 		}
 	}
 	return nil
