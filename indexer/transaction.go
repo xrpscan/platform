@@ -43,27 +43,27 @@ func BulkIndexTransaction(ch <-chan kafka.Message) {
 		var tx map[string]interface{}
 		err := json.Unmarshal(message.Value, &tx)
 		if err != nil {
-			logger.Log.Debug().Err(err).Msg("Transaction json.Unmarshal error")
+			logger.Log.Error().Err(err).Msg("Transaction json.Unmarshal error")
 			continue
 		}
 
 		// Modify transaction by fixing some transaction fields
 		modifiedTx, err := ModifyTransaction(tx)
 		if err != nil {
-			logger.Log.Debug().Err(err).Msg("Error fixing transaction object")
+			logger.Log.Error().Err(err).Msg("Error fixing transaction object")
 			continue
 		}
 
 		// Marshal modified transaction back to JSON
 		txJSON, err := json.Marshal(modifiedTx)
 		if err != nil {
-			logger.Log.Debug().Err(err).Msg("Transaction json.Marshal error")
+			logger.Log.Error().Err(err).Msg("Transaction json.Marshal error")
 			continue
 		}
 
 		li, ok := tx["ledger_index"].(float64)
 		if !ok {
-			logger.Log.Debug().Err(err).Msg("ledger_index not found in transaction")
+			logger.Log.Error().Err(err).Msg("ledger_index not found in transaction")
 			continue
 		}
 		indexName := GetIndexName(models.StreamTransaction.String(), int(li))
@@ -78,9 +78,9 @@ func BulkIndexTransaction(ch <-chan kafka.Message) {
 				Body:       bytes.NewReader(txJSON),
 				OnFailure: func(ctx context.Context, item esutil.BulkIndexerItem, res esutil.BulkIndexerResponseItem, err error) {
 					if err != nil {
-						logger.Log.Trace().Err(err).Msg("Bulk index error")
+						logger.Log.Error().Err(err).Msg("Bulk index error")
 					} else {
-						logger.Log.Trace().Err(err).Str("hash", item.DocumentID).Str("type", res.Error.Type).Str("reason", res.Error.Reason).Msg("Bulk index error")
+						logger.Log.Error().Err(err).Str("hash", item.DocumentID).Str("type", res.Error.Type).Str("reason", res.Error.Reason).Msg("Bulk index error")
 					}
 				},
 			},

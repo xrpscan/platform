@@ -129,7 +129,7 @@ func modifyAmount(tx map[string]interface{}, field string, network xrpl.Network)
 		if ok {
 			iouValue, err := strconv.ParseFloat(iouValueStr, 64)
 			if err != nil {
-				logger.Log.Trace().Err(err).Str("field", field).Msg("IOU value error")
+				logger.Log.Debug().Err(err).Str("field", field).Msg("IOU value error")
 			} else {
 				iou["_value"] = iouValue
 			}
