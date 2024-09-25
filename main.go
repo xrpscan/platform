@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/labstack/echo/v4"
 	"github.com/xrpscan/platform/config"
 	"github.com/xrpscan/platform/connections"
@@ -29,5 +31,6 @@ func main() {
 	routes.Add(e)
 
 	signals.HandleAll()
-	e.Logger.Fatal(e.Start(":3000"))
+	serverAddress := fmt.Sprintf("%s:%s", config.EnvServerHost(), config.EnvServerPort())
+	e.Logger.Fatal(e.Start(serverAddress))
 }

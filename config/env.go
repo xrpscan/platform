@@ -25,6 +25,16 @@ func EnvLoad(filenames ...string) {
 * Service settings
  */
 
+// Get HTTP server hostname
+func EnvServerHost() string {
+	return os.Getenv("SERVER_HOST")
+}
+
+// Get HTTP server port
+func EnvServerPort() string {
+	return os.Getenv("SERVER_PORT")
+}
+
 // Get default log level
 func EnvLogLevel() string {
 	return os.Getenv("LOG_LEVEL")
