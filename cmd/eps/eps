@@ -4,16 +4,22 @@
 # 1. Copy this script to user accessible bin directory
 # 2. Adjust platform environment file location below
 
-ES_ENV_FILE=.env
-
+ES_ENV_FILE=~/platform/.env
 source $ES_ENV_FILE
+
+echo "=== Refresh indexes ==="
 curl -k -u elastic:$ELASTICSEARCH_PASSWORD -XGET 'https://localhost:9200/_refresh'
 echo
+echo
 echo "=== Aliases ==="
-curl -k -u elastic:$ELASTICSEARCH_PASSWORD -XGET 'https://localhost:9200/_cat/aliases?v=true'
+curl -k -u elastic:$ELASTICSEARCH_PASSWORD -XGET 'https://localhost:9200/_cat/aliases/platform.xrpl*?v=true'
 echo
 echo "=== IndexTemplates ==="
-curl -k -u elastic:$ELASTICSEARCH_PASSWORD -XGET 'https://localhost:9200/_cat/templates/platform*?v=true'
+curl -k -u elastic:$ELASTICSEARCH_PASSWORD -XGET 'https://localhost:9200/_cat/templates/platform.xrpl*?v=true'
 echo
 echo "=== Indices ==="
-curl -k -u elastic:$ELASTICSEARCH_PASSWORD -XGET 'https://localhost:9200/_cat/indices?v=true&s=store.size:asc,index:asc'
+curl -k -u elastic:$ELASTICSEARCH_PASSWORD -XGET 'https://localhost:9200/_cat/indices/platform.xrpl*?v=true&s=index:asc'
+echo
+echo "=== Transaction count ==="
+curl -s -k -u elastic:$ELASTICSEARCH_PASSWORD -XGET 'https://localhost:9200/platform.xrpl.transactions/_count'
+echo
