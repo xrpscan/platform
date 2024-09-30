@@ -6,6 +6,8 @@ import (
 	"github.com/xrpscan/platform/config"
 )
 
+const ScalingFactor = 1000000
+
 func IndexTemplateTransaction(shards uint8, replicas uint8) string {
 	template := `
 	{
@@ -36,7 +38,7 @@ func IndexTemplateTransaction(shards uint8, replicas uint8) string {
 }
 
 func transactionMapping() string {
-	return `
+	return fmt.Sprintf(`
 	"mappings": {
 		"_source": {
 			"enabled": true
@@ -51,7 +53,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean" }
 				}
 			},
@@ -61,7 +63,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -71,7 +73,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -81,7 +83,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -103,7 +105,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -113,7 +115,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -131,7 +133,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -141,7 +143,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -156,14 +158,14 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
 			"Expiration": { "type": "long" },
 			"_Expiration": { "type": "date" },
 			"Fee": { "type": "long" },
-			"_Fee": { "type": "double" },
+			"_Fee": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 			"FinishAfter": { "type": "long" },
 			"_FinishAfter": { "type": "date" },
 			"Flags": { "type": "long" },
@@ -180,7 +182,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -190,7 +192,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -200,7 +202,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -222,7 +224,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -267,7 +269,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -306,7 +308,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -316,7 +318,7 @@ func transactionMapping() string {
 					"_currency": { "type": "keyword" },
 					"issuer": { "type": "keyword" },
 					"value":  { "type": "keyword" },
-					"_value": { "type": "long", "ignore_malformed": true },
+					"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 					"native": { "type": "boolean"}
 				}
 			},
@@ -345,7 +347,7 @@ func transactionMapping() string {
 							"_currency": { "type": "keyword" },
 							"issuer": { "type": "keyword" },
 							"value":  { "type": "keyword" },
-							"_value": { "type": "long", "ignore_malformed": true },
+							"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 							"native": { "type": "boolean"}
 						}
 					},
@@ -357,7 +359,7 @@ func transactionMapping() string {
 							"_currency": { "type": "keyword" },
 							"issuer": { "type": "keyword" },
 							"value":  { "type": "keyword" },
-							"_value": { "type": "long", "ignore_malformed": true },
+							"_value": { "type": "scaled_float", "scaling_factor": %[1]v, "ignore_malformed": true },
 							"native": { "type": "boolean"}
 						}
 					}
@@ -365,5 +367,5 @@ func transactionMapping() string {
 			},
 			"validated": { "type": "boolean" }
 		}
-	}`
+	}`, ScalingFactor)
 }
