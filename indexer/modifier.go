@@ -201,8 +201,11 @@ func modifyDate(tx map[string]interface{}, field string) error {
 	rippleTimestamp, ok := tx[field].(float64)
 	if ok {
 		newField := fmt.Sprintf("_%s", field)
-		newTime := xrpl.RippleTimeToISOTime(int64(rippleTimestamp))
-		tx[newField] = newTime
+		timeStamp := int64(rippleTimestamp)
+		if field == models.LastUpdateTime.String() {
+			timeStamp = xrpl.UnixTimeToRippleTime(timeStamp)
+		}
+		tx[newField] = xrpl.RippleTimeToISOTime(timeStamp)
 	}
 	return nil
 }
