@@ -170,6 +170,7 @@ func transactionMapping() string {
 			"_FinishAfter": { "type": "date" },
 			"Flags": { "type": "long" },
 			"Fulfillment": { "type": "keyword" },
+			"Holder": { "type": "keyword" },
 			"InvoiceID": { "type": "keyword" },
 			"Issuer": { "type": "keyword" },
 			"LastLedgerSequence": { "type": "long" },

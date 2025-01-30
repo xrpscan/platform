@@ -54,6 +54,14 @@ type Transaction struct {
 	BidMax       Currency       `json:"BidMax,omitempty"`
 	AuthAccounts []AuthAccounts `json:"AuthAccounts,omitempty"`
 
+	// AMMClawback fields - https://xrpl.org/docs/references/protocol/transactions/types/ammclawback/
+	// Shared fields:
+	// Account string
+	// Asset Currency
+	// Asset2 Currency
+	// Amount Currency
+	Holder string `json:"Holder,omitempty"`
+
 	// AMMCreate fields - https://xrpl.org/docs/references/protocol/transactions/types/ammcreate/
 	// Shared fields:
 	// Amount Currency
