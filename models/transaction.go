@@ -97,6 +97,23 @@ type Transaction struct {
 	// EPrice    Currency
 	LPTokenIn Currency `json:"LPTokenIn,omitempty"`
 
+	// CredentialAccept fields - https://xrpl.org/docs/references/protocol/transactions/types/credentialaccept
+	// Shared fields
+	// Issuer     string
+	CredentialType string `json:"CredentialType,omitempty"`
+
+	// CredentialCreate fields - https://xrpl.org/docs/references/protocol/transactions/types/credentialcreate
+	// Shared fields
+	// Issuer     string
+	// CredentialType string
+	Subject string `json:"Subject,omitempty"`
+
+	// CredentialDelete fields - https://xrpl.org/docs/references/protocol/transactions/types/credentialdelete
+	// Shared fields
+	// Issuer     string
+	// CredentialType string
+	// Subject string
+
 	// CheckCancel fields - https://xrpl.org/checkcancel.html#checkcancel-fields
 	// Shared fields:
 	// CheckID string
@@ -157,6 +174,9 @@ type Transaction struct {
 	// Owner     string
 	// OfferSequence uint32
 	Fulfillment string `json:"Fulfillment,omitempty"`
+
+	// LedgerFixType fields - https://xrpl.org/docs/references/protocol/transactions/types/ledgerstatefix
+	LedgerFixType uint16 `json:"LedgerFixType,omitempty"`
 
 	// NFTokenAcceptOffer fields - https://xrpl.org/nftokenacceptoffer.html#nftokenacceptoffer-fields
 	NFTokenSellOffer string   `json:"NFTokenSellOffer,omitempty"`

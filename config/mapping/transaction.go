@@ -125,6 +125,7 @@ func transactionMapping() string {
 			"CheckID": { "type": "keyword" },
 			"ClearFlag": { "type": "long" },
 			"Condition": { "type": "keyword" },
+			"CredentialType": { "type": "keyword" },
 			"ctid": { "type": "keyword" },
 			"Data": { "type": "keyword" },
 			"DeliverMax": {
@@ -176,6 +177,7 @@ func transactionMapping() string {
 			"LastLedgerSequence": { "type": "long" },
 			"LastUpdateTime": { "type": "long" },
 			"_LastUpdateTime": { "type": "date" },
+			"LedgerStateFix": { "type": "integer" },
 			"LedgerSequence": { "type": "long" },
 			"LimitAmount": {
 				"properties": {
@@ -303,6 +305,7 @@ func transactionMapping() string {
 			},
 			"SigningPubKey": { "type": "keyword" },
 			"SourceTag": { "type": "long" },
+			"Subject": { "type": "keyword" },
 			"TakerGets": {
 				"properties": {
 					"currency": { "type": "keyword" },
