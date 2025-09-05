@@ -102,6 +102,7 @@ const (
 	URI
 	Provider
 	AssetClass
+	CredentialType
 )
 
 // Convert HexField to its string representation
@@ -117,6 +118,8 @@ func (hf HexField) String() string {
 		return "Provider"
 	case AssetClass:
 		return "AssetClass"
+	case CredentialType:
+		return "CredentialType"
 	}
 	return ""
 }
@@ -128,6 +131,7 @@ var HexFields = []HexField{
 	URI,
 	Provider,
 	AssetClass,
+	CredentialType,
 }
 
 // Fields with Date
