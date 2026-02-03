@@ -264,6 +264,16 @@ type Transaction struct {
 	// Amount     Currency
 	// Expiration uint32
 
+	// PermissionedDomainSet fields - https://xrpl.org/docs/references/protocol/transactions/types/permissioneddomainset
+	// Shared fields:
+	// DomainID    string
+	AcceptedCredentials []AcceptedCredentials `json:"AcceptedCredentials,omitempty"`
+	DomainID            string                `json:"DomainID,omitempty"`
+
+	// PermissionedDomainDelete fields - https://xrpl.org/docs/references/protocol/transactions/types/permissioneddomaindelete
+	// Shared fields:
+	// DomainID    string
+
 	// SetFee fields - https://xrpl.org/setfee.html#setfee-fields
 	// Shared fields:
 	// LedgerSequence        uint32
