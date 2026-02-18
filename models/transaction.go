@@ -233,6 +233,7 @@ type Transaction struct {
 
 	// Payment fields - https://xrpl.org/payment.html#payment-fields
 	Amount         Currency `json:"Amount,omitempty"`
+	CredentialIDs  []string `json:"CredentialIDs,omitempty"`
 	Destination    string   `json:"Destination,omitempty"`
 	DestinationTag uint32   `json:"DestinationTag,omitempty"`
 	InvoiceID      string   `json:"InvoiceID,omitempty"`
